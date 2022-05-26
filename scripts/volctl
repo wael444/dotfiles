@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+id="991049"
+sink="@DEFAULT_SINK@"
+
+getvol() {
+  [ "$(pactl get-sink-mute $sink)" = "Mute: yes" ] && echo "mute" && exit
+  vol=$(pactl get-sink-volume $sink)
+  vol=${vol%%\%*}
+  vol=${vol##*\/ }
+  vol=${vol#\ }
+}
+
+case $1 in
+	mute) pactl set-sink-mute $sink toggle ;;
+    getvol) getvol && echo $vol && exit ;;
+    *) pactl set-sink-volume $sink "$@" ;;
+esac
+
+
+#[ "$(pactl get-sink-mute $sink)" = "Mute: yes" ] && \
+#  dunstify -u low -r $id -h int:value:0 "muted" || \
+#  getvol && dunstify -u low -r $id -h int:value:$vol "vol: $vol"

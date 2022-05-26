@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+case $1 in
+	norm) flameshot gui ;;
+	fast) flameshot gui -s -c ;;
+	win)
+		win=$(xdotool getactivewindow)
+		eval $(xdotool getwindowgeometry --shell $win)
+		flameshot gui --region ${WIDTH}x${HEIGHT}+${X}+${Y}
+	;;
+	list) echo "norm"'\n'"fast"'\n'"win" ;;
+	*) echo "usage: ${0##*/} [norm] [fast] [win]"
+esac

@@ -1,0 +1,85 @@
+set ratios 1:2:3
+set cleaner ~/.config/lf/cleaner
+set previewer ~/.config/lf/preview
+set preview    true
+set hidden     true
+set icons      true
+set ignorecase true
+set hidden     true
+set info       time:size
+
+cmd open ${{
+    case $(file --mime-type "$f" -bL) in
+        text/*|application/json) $EDITOR "$f";;
+        *) xdg-open "$f" ;;
+    esac
+}}
+
+cmd mkdir ${{
+  printf "directory name: "
+  read ans
+  mkdir $ans
+}}
+
+cmd mkfile ${{
+  printf "file Name: "
+  read ans
+  $EDITOR $ans
+}}
+
+cmd setwallpaper %cp "$f" ~/.config/wall.png && xwallpaper --zoom "$f"
+cmd dragon %dragon -a -x $fx
+## https://github.com/gokcehan/lf/blob/master/doc.go
+
+# unbind
+map h
+map j
+map k
+map l
+map m
+map n
+map space
+
+# movement
+map w up
+map a updir
+map s down
+map d open
+map W half-up
+map S half-down
+map l unselect
+map k select
+map j glob-select
+map h glob-unselect
+
+# actions
+map . set hidden!
+map r rename
+map x cut
+map v paste
+map y
+map c copy
+map md mkdir
+map mf mkfile
+map R reload
+map C clear
+map D delete
+map f find
+map <space> :toggle; down
+
+# misc
+map b setwallpaper
+map q quit
+map <enter> shell
+map p dragon
+
+# defaults, will need just to know what shit does
+map zh set hidden!
+map zr set reverse!
+map zn set info
+map zs set info size
+map zt set info time
+map za set info size:time
+map zz set sortby ext
+map e $$EDITOR "$f"
+map i $$PAGER "$f"

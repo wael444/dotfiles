@@ -1,0 +1,15 @@
+
+  window:
+    padding:
+      x: 8
+      y: 8
+
+  font:
+    size: 14
+    normal:
+      family: JetBrainsMono Nerd Font
+
+  cursor:
+    style: Block
+    blinking: true
+    blink_interval: 750

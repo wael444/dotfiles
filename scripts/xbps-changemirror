@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+confmirrors=(
+/etc/xbps.d/00-repository-main.conf
+/etc/xbps.d/10-repository-multilib-nonfree.conf
+/etc/xbps.d/10-repository-multilib.conf
+/etc/xbps.d/10-repository-nonfree.conf
+)
+
+doas tee ${confmirrors[0]} <<< "repository=$1/current"
+doas tee ${confmirrors[1]} <<< "repository=$1/current/multilib/nonfree"
+doas tee ${confmirrors[2]} <<< "repository=$1/current/multilib"
+doas tee ${confmirrors[3]} <<< "repository=$1/current/nonfree"

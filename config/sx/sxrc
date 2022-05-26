@@ -1,0 +1,4 @@
+xrdb -load $XRESOURCES
+eval $(dbus-launch)
+pipewire -v &>/tmp/pipewire.out &
+exec dbus-launch --exit-with-session --sh-syntax ${@:-dwm}

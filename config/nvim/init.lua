@@ -1,0 +1,6 @@
+require('options')
+require('plugins')
+require('config')
+require('keybinds')
+vim.cmd([[colorscheme base16-gruvbox-dark-hard]])
+require('colors')

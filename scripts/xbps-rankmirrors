@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+repos=(
+https://alpha.de.repo.voidlinux.org
+https://repo-fi.voidlinux.org
+https://mirrors.servercentral.com/voidlinux
+https://repo-us.voidlinux.org
+https://mirror.ps.kz/voidlinux
+https://mirrors.bfsu.edu.cn/voidlinux
+https://mirrors.cnnic.cn/voidlinux
+https://mirrors.tuna.tsinghua.edu.cn/voidlinux
+https://mirror.sjtu.edu.cn/voidlinux
+https://void.webconverger.org
+https://mirror.aarnet.edu.au/pub/voidlinux
+https://ftp.swin.edu.au/voidlinux
+https://void.cijber.net
+http://ftp.dk.xemacs.org/voidlinux
+https://mirrors.dotsrc.org/voidlinux
+https://quantum-mirror.hu/mirrors/pub/voidlinux
+https://voidlinux.mirror.garr.it
+https://mirror.fit.cvut.cz/voidlinux
+http://ftp.debian.ru/mirrors/voidlinux
+https://mirror.yandex.ru/mirrors/voidlinux
+https://cdimage.debian.org/mirror/voidlinux
+https://ftp.acc.umu.se/mirror/voidlinux
+https://ftp.lysator.liu.se/pub/voidlinux
+https://ftp.sunet.se/mirror/voidlinux
+https://void.sakamoto.pl
+https://mirror.clarkson.edu/voidlinux
+)
+
+
+pkg=current/xbps-0.59.1_5.x86_64.xbps
+
+xbps_fetch() {
+	rm results
+	for repo in ${repos[@]}; do
+		val=0
+		for v in {0..2}; do
+			rm ${pkg#*\/}
+			v=$(awk 'END{print $5}' <<< "$(xbps-fetch $repo/$pkg)")
+			case $v in
+				*GB*) rate=${v%GB*} ;;
+				*MB*) rate=0.${v%MB*} ;;
+				*KB*) rate=0.0${v%KB*} ;;
+			esac
+			val=$((val + 1))
+			export rate$val=$rate
+			echo $val
+			echo $rate$val
+		done
+		avgrate=$(bc <<< "($rate1 + $rate2 + $rate3) % 3")
+	  tee -a results <<< "$avgrate $repo"
+	done
+	rm ${pkg#*\/}
+}
+
+curl_fetch() {
+	for repo in ${repos[@]}; do
+	  dl="$(curl --progress-bar -o/dev/null $repo/$pkg --write-out %{speed_download})"
+	  printf "%-10s - %s\n" "$dl" "$repo" | tee -a curlresults
+	done
+}
+
+$1_fetch

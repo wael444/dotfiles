@@ -1,0 +1,28 @@
+#!/usr/bin/env -S bash
+
+# helpers
+menu() { dmenu -p $1 "${@:2}" ; }
+prompt() { 
+	# i know this is incorrect usage of printf but it works
+	[[ $(printf "nope.\nsure!!" | dmenu -p ?) = s* ]] && return 0;
+}
+
+# functions
+kill() {
+	local list="$(ps -au $USER -o pid,cmd --no-header)"
+	local pid="$(dmenu -p kill -z 512 -t <<< $list)"
+	[[ ! -z "$pid" ]] && cnfrm && /usr/bin/kill -9 "$(awk '{print $1}' <<< $pid)"
+}
+
+path() {
+		for d in ${PATH//:/ }; do
+			find "$d/" -perm /111 2>/dev/null
+		done | sort -R | sed 's#.*/##'
+}
+
+run() {
+	ans="$(dmenu -g 2 -l 10 -p run <<< $(path))"
+	sh -c "$ans" &
+}
+
+[ ! -z $1 ] && $1 "${@:2}"

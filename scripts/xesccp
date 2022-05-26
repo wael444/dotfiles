@@ -1,0 +1,1 @@
+echo -e '\u001B' | xclip -sel c

@@ -1,0 +1,64 @@
+#!/usr/bin/env -S bash -x
+userid=31ainet5mbryzxzo2f6h5fyu7hsq
+
+# helpers
+hand() {
+	local oauth=BQDXWXsjkEy0jKyF2g3NdNDqWVjdtPo5C9fnO7N-H8a6Tse7S2xtWK-tJPdS2pg0nhPww5OU_0-iOxp3aSCm2z2Ixbgj34UBm9ZD5M1gDkFTK3rk0lc-C2mQpY8F5aNN2R3SfzNskUUJoRPmC2pXfcUG7VP-CkUiASg6QbuyVoMS5htYhGvmuGlePz7LanSEIsOQXHexcSnhp_51WQVlA_bVNcMR7gfgMY19iqErjUEsXKgcR7oVk0KtymFxq6X5md-PtVkv5Yd6RKmmTZLtqYxKt2Q9Tl1k6c3OTrIzF-xbAY1_
+	curl -X $1 "https://api.spotify.com/v1/$2" "${@:3}" -H "Authorization: Bearer $oauth"
+}
+
+delete() {
+	while :; do
+		read -r line < ~/.line
+		local playlistid=$(sed "${line}q;d" PLAYLISTS)
+		local playlistid=${playlistid%%\ *}
+		hand DELETE "playlists/${playlistid}/followers"
+		echo $(( line + 1 )) > ~/.line
+	done
+}
+
+#check() {
+#	while read -r n q; do
+#		[[ $n = $num ]] && echo "$n cool" || { echo "$n ugly" && exit }
+#		(( num++ ))
+#	done <<< $(tac file)
+#}
+
+create() {
+	while :; do
+		read -r sum < ~/.sum
+		local data='{"name":"My Playlist #'$(printf "%'.0f\n" "$sum")'","public":true}'
+		local create="$(hand POST "users/$userid/playlists" --data "$data")"
+		[[ "$create" == *"402"* ]] && exit
+		[[ "$create" == *"400"* ]] && exit
+		local id=$(jq -r '.id' <<< $create)
+		local track=1lvs1UC4nE3F8ZizzGUGYX
+		hand POST "playlists/$id/tracks?uris=spotify%3Atrack%3A$track"
+		echo $(( sum + 1 )) > ~/.sum
+	done
+}
+
+get() {
+	while :; do
+		read -r offset < ~/.offset
+		query=$(hand GET "users/$userid/playlists?limit=50&offset=$offset")
+		jq -r '.items[]| .id + " " + .name' <<< $query >> PLAYLISTS
+		echo $(( offset + 1 )) > ~/.offset
+	done
+}
+
+# renamer cuz my brain cell jack fell off while making the creatah
+##renamer() {
+##	while :; do
+##		playlistinfo="$(curl -s -X "GET" "https://api.spotify.com/v1/me/playlists?limit=1&offset=$sum" $curlargs -H "Authorization: Bearer $oauth")"
+##		playlistname=$(jq -r '.items[].name' <<< $playlistinfo)
+##		playlistid=$(jq -r '.items[].id' <<< $playlistinfo)
+##		oldplaylistnumber="${playlistname:13}"
+##		newplaylistnumber=$(printf "%'.0f\n" $oldplaylistnumber)
+##		data="{\"name\":\"My Playlist #$newplaylistnumber\",\"public\":true}"
+##		curl -X "PUT" "https://api.spotify.com/v1/playlists/$playlistid" --data "{\"name\":\"My Playlist #$newplaylistnumber\",\"public\":true}" $curlargs -H "Authorization: Bearer $oauth" 
+##		sum=$(( sum + 1 ))
+##	done	
+##}
+
+$1

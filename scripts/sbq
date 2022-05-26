@@ -1,0 +1,134 @@
+#!/usr/bin/env -S bash
+
+fifo="$XDG_RUNTIME_DIR/${0##*/}"
+
+## helpers
+function notify() {
+	dunstify -r 64219 "$@"
+}
+
+## the real
+function time() {
+	local time="$(date '+%a %H:%M:%S')"
+	printf "%s%s" "^C3^ ^d^" "${time,,}"
+
+	[ -z $BLOCK_BUTTON ] || {
+		# unforunately this is the only good way to do this in shell
+		local cal="$(cal)"
+		local cal="${cal%$'\n'*}" # removes useless new line
+		local head="${cal%%$'\n'*}" # removes all after first(?) new line
+		local body="${cal/$head$'\n'/}" # remove all after $head 
+		local curday="$(date +%d)"
+		local head="    $(date '+%Y %m (%B)')"
+		notify "$head" "${body/$curday/<b>$curday</b>}"
+	}
+}
+
+function cpu() {
+	read -r temp < /sys/class/thermal/thermal_zone2/temp
+	read -r loadavg < /proc/loadavg
+	loadavg="${loadavg%%\ *}"
+	temp="${temp:0:2}°C"
+	printf "%s %s %s%s" "^C3^﨎^d^" "$temp" "^C3^ ^d^" "$loadavg"
+
+	case $BLOCK_BUTTON in
+		1) notify "cpu usage" "\n$(ps -ewo %cpu,cmd --sort=-%cpu --no-headers | head -20 | cut -c-32 )" ;;
+		3)
+			read -r gov < /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+			read -r freq < /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+			read -r cstate < /sys/module/intel_idle/parameters/max_cstate
+			notify "processor information" "$(
+				printf "\n%-14s - %s\n" "load average" "$loadavg"
+				printf "%-14s - %s\n" "governor" "$gov"
+				printf "%-14s - %s\n" "frequency" "$((freq / 1000))"
+				printf "%-14s - %s\n" "c-state" "$cstate"
+				printf "%-14s - %s\n" "temperature" "$temp"
+			)"
+		;;
+	esac
+}
+
+function gpu() {
+	## I KNOW EVAL IS UNSAFE I JUST DON'T KNOW HOW ELSE
+	# graphics=XX memory=XX video=XX PCIe=XX
+	eval $(nvidia-settings -q GPUUtilization -t | tr -d ,)
+	printf "%s%s %s%s" '^C3^﨎 ^d^' "$(nvidia-settings -q GPUCoreTemp -t)°C" '^C3^ ^d^' "${graphics}% "
+
+	[ ! -z $BLOCK_BUTTON ] && {
+		notify "querying information..."
+		notify "graphics card information" "$(
+			# ok this is pretty shitty but it werks
+			for get in NvidiaDriverVersion GPU{CoreTemp,CurrentFanSpeed,ResizableBar} RefreshRate3; do
+				local query="$(nvidia-settings -q $get -t | tr '\n' ' ')"
+				printf '%-20s - %s\n' "$get" "$query"
+			done
+			for usage in video PCIe memory graphics; do
+				printf '%-20s - %s\n' $usage $(eval echo $video)%
+			done
+		)"
+	}
+}
+
+function mem() {
+	while IFS=':k ' read -r n v _; do case $n in MemAvailable) a=$v ;; MemTotal) t=$v ;; esac 
+	done < /proc/meminfo
+	local usg=$(calc "(($t-$a) / $t) * 100")
+	local usg=${usg#*\~}
+	local usg=${usg%.*}
+	printf "%s%s" "^C3^ ^d^" "${usg}%"
+
+	case $BLOCK_BUTTON in
+		1) notify "memory usage" \
+			"\n$(ps -ewo rss,%mem,cmd --sort -rss --no-headers | head -20 | cut -c-32 \
+			| while read -r rss rest; do echo $((rss/1024))"MB -" $rest; done)" ;;
+		3) notify "$(printf '%-10s - %s\n%-10s - %s' "$((t/1024))MiB" "total" "$(($((t-$a))/1024))MiB" "used")" ;;
+	esac
+}
+
+function net() {
+	interface=/sys/class/net/eno2/
+	read -r status < $interface/operstate
+	case $status in
+		down) printf "%s" "^C3^ ^d^";;
+	esac
+	update() {
+		cache="$XDG_CACHE_HOME/${0##*/}_${1##*/}"
+		read -r old < $cache
+		read -r new < $1
+		printf $new > $cache
+		numfmt --to=iec "$(( new - old ))"
+	}
+	printf "%s%s %s%s" \
+		"^C3^^d^ " "$(update $interface/statistics/rx_bytes)" \
+		"^C3^^d^ " "$(update $interface/statistics/tx_bytes)"
+}
+
+function disk() {
+	read -r temp < /sys/devices/pci0000:00/0000:00:1d.0/0000:04:00.0/nvme/nvme0/hwmon0/temp1_input
+	printf "%s%s" '^C3^﫭 ^d^' "${temp:0:2}°C"
+}
+
+function audio() {
+	printf "%s %s" '墳' "$(volctl getvol)%"
+	case $BLOCK_BUTTON in
+		1) pavucontrol ;;
+		3) volctl mute ;;
+		5) volctl -5%  ;;
+		4) volctl +5%  ;;
+	esac
+}
+
+
+
+#function music() {
+#	read -r known < ${fifo}spot
+#	printf "%s" "$known"
+#}
+
+#function Spotify() {
+#	[ ! -e ${fifo}.spot ] && mkfifo ${fifo}spot
+#	echo "$@" > ${fifo}.spot
+#	pkill -RTMIN+7 dwmblocks
+#}
+
+$1 "${@:2}"

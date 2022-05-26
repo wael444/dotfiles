@@ -1,0 +1,69 @@
+#!/usr/bin/env -S sh
+## shitty linux fetch
+read -r hostname < /proc/sys/kernel/hostname
+read -r type <  /proc/sys/kernel/ostype
+read -r kernel < /proc/sys/kernel/osrelease
+read -r board < /sys/class/dmi/id/board_name
+read -r sys < /sys/class/dmi/id/sys_vendor
+# distro
+. /etc/os-release
+
+# packages, stolen from fet.sh, works only on specific distros i use.
+for i in '/var/db/kiss/installed/*'  '/var/lib/pacman/local/[0-9a-z]*' '/var/db/xbps/.*'  '/var/db/pkg/*/*'; do
+	set -- $i
+	[ $# -gt 1 ] && pkgs=$# && break
+done
+
+# uptime
+IFS=. read -r i _ < /proc/uptime
+d="$((i / 60 / 60 / 24))"
+h="$((i / 60 / 60 % 24))"
+m="$((i / 60 % 60))"
+[ $m -gt 0 ] && up="${m}m $((i % 60))s"
+[ $h -gt 0 ] && up="${h}h $up"
+[ $d -gt 0 ] && up="${d}d $up"
+
+# cpu
+while read -r line; do case $line in vendor_id*) vendor="${line##*: } ";; model\ name*) cpu=${line##*: }; break;; esac
+done < /proc/cpuinfo
+cpu=${cpu% CPU*}
+cpu=${cpu#*Core(TM) *}
+
+# gpu
+while read -r line; do case $line in *VGA*) gpu=${line##*: } ;; esac
+done <<-EOF
+	$(lspci)
+EOF
+gpu=${gpu#*[}
+gpu=${gpu%]*}
+gpu=${gpu%Rev*}
+gpu=${gpu#GeForce }
+
+# memory
+while IFS=': ' read -r n v _; do case $n in MemTotal) mem=$(($v / 1024)) ;; esac
+done < /proc/meminfo
+
+# wm
+id="$(xprop -root _NET_SUPPORTING_WM_CHECK)"
+wm="$(xprop -id ${id##*\# } _NET_WM_NAME)"
+wm="${wm##*= \"}"
+wm="${wm%%\"}"
+
+# term
+[ $TERM = linux ] && term=$(tty) || term=${TERM%%-*} # st-256color
+
+print() {
+	printf "\033[%sm%-6s\033[0m%s\n" "$1" "$2" "$3"
+}
+
+print '1;31' os "$PRETTY_NAME"
+print '1;32' kern "$type $kernel"
+print '1;33' sh "${SHELL##*/}"
+print '1;34' pkgs "$pkgs"
+print '1;35' wm "$wm"
+print '1;36' term "$term"
+print '1;31' body "$sys ${board% GAMING}" # self-explanitory
+print '1;31' wits "$cpu"
+print '1;31' gpu "$gpu"
+print '1;31' mem "${mem}MB"
+print '1;31' up "$up"

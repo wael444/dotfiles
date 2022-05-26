@@ -1,0 +1,55 @@
+notify = true
+use_nerdfont = true
+default_keybindings = false
+
+[keybindings]
+
+# movement
+"Esc" = "back"
+"q" = "queue"
+"Q" = "focus queue"
+"w" = "move up"
+"W" = "move up 5"
+"e" = "open selected"
+"E" = "open current"
+"r" = "repeat"
+"R" = "delete"
+"a" = "move left"
+"s" = "move down"
+"S" = "move down 5"
+"/" = "search"
+"Ctrl+/" = "focus search"
+"d" = "move right"
+"D" = "play"
+"f" = "save"
+"Ctrl+f" = "focus library"
+"z" = "shuffle"
+"x" = "share"
+"Space" = "playpause"
+"=" = "seek +10000"
+"-" = "seek -10000"
+
+# stop
+"Right" = "next"
+"Up" = "volup"
+"Down" = "voldown"
+"Left" = "previous"
+
+# clear
+# playnext
+"u" = "update"
+"i" = "insert"
+"h" = "sort title d"
+"j" = "sort duration d"
+"k" = "sort artist d"
+"l" = "sort added d"
+"n" = "quit"
+"p" = "newplaylist"
+"m" = "reload"
+
+# playback
+
+# functions
+
+# other
+

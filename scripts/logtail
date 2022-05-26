@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+## my own shitty way of svlogtail but using bat(1) for da syntax highlighting
+
+page() {
+	bat -fPpl log --theme ansi "$@" 
+}
+
+echo "waiting for bat to finish..."
+page /var/log/socklog/*/current | sort -n
+tail -Fq -n0 /var/log/socklog/*/current | page

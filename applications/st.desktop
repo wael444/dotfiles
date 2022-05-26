@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Simple Terminal Emulator
+Terminal=false
+Exec=st
+Categories=System;TerminalEmulator;

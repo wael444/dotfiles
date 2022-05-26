@@ -1,0 +1,1 @@
+printf '👉 👈' | xclip -sel c

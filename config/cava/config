@@ -1,0 +1,7 @@
+[general]
+framerate = 144
+sensitivity = 10
+autosens = 0
+
+[output]
+method = ncurses

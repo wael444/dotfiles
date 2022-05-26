@@ -1,0 +1,181 @@
+#!/usr/bin/env -S bash
+# PLEASE SEND HELP OH MY GOD
+
+# icons, colors
+declare -A RES OTH MED NET COL
+RES=( 
+	[temp]="﨎 " [puls]="勞 " [mmry]=" "
+	[chip]="﬙ "  [disp]="  " [accl]=" " [disk]=" "
+)
+OTH=( [clndr]=" " [clock]=" " )
+MED=( [hgh]="墳 " [mdm]="奔 " [low]="奄 " [ded]="ﱝ " [mus]=" " )
+NET=( [dl]="ﯲ " [up]="ﯴ " [dn]=" " )
+COL=(
+	[cpu]=4  [cputemp]=4
+	[gpu]=4  [gputemp]=4
+	[disk]=4 [disktemp]=4
+	[mem]=4 [mus]=4
+	[snd]=4 [time]=4
+	[netup]=4 [netdl]=4 [netdn]=1
+)
+
+n() { dunstify -r 641828 "$@" ; }
+
+print() { printf "^C%s^%s^d^%s" "$@" ; }
+
+printcol() {
+	for i in $(( $(($(seq 1 $# | tail -1) - 1)) / 2 )); do
+		print+="%-${1}s - %s\n"
+	done
+	shift
+	printf "$print" $@
+}
+
+# both cal and printcol are extremely shitty solutions but they work so....
+
+cpu() {
+	# copied from neofetch
+	while read -r v _ _; do case $v in processor) pc=$((pc+1)) ;; esac done </proc/cpuinfo
+	usg="$(ps aux | awk 'BEGIN {sum=0} {sum+=$3}; END {print sum}')"
+	usg="$((${usg/\.*} / ${pc:-1}))"
+	read -r loadavg < /proc/loadavg
+	read -r temp < /sys/devices/platform/coretemp.0/hwmon/hwmon3/temp1_input
+	print ${COL[cpu]}     "${RES[accl]}" "${usg}% "
+	print ${COL[cputemp]} "${RES[temp]}" "${temp:0:2}°C"
+	case $BLOCK_BUTTON in
+		1) n "$(ps -u $USER -wo %cpu,comm --sort=-%cpu --no-headers | head -10)" ;;
+		3)
+			read -r gov < /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+			read -r freq < /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+			read -r cstate < /sys/module/intel_idle/parameters/max_cstate
+			n "$(printcol 7 "loadavg" "${loadavg%%\ *}" "gov" "$gov" \
+				"freq" "$((freq / 1000))MHz" "cstate" "$cstate" \
+				"temp" "${temp%000}°C")"
+		;;
+	esac
+}
+
+
+mem() {
+	while IFS=':k ' read -r n v _; do case $n in MemAvailable) a=$v ;; MemTotal) t=$v ;; esac 
+	done < /proc/meminfo
+	local usg=$(calc "(($t-$a) / $t) * 100")
+	local usg=${usg#*\~}
+	local usg=${usg%.*}
+	print ${COL[mem]} "${RES[mmry]}" "${usg}%"
+	case $BLOCK_BUTTON in
+		1) n "$(ps -u $USER -wo rss=,comm= --sort -rss | while read -r rss comm; do echo $((rss/1024))"MB -" $comm; done | head -10)" ;;
+		3) n "$(printf '%-10s - %s\n%-10s - %s' "$((t/1024))MiB" "total" "$(($((t-$a))/1024))MiB" "used")" ;;
+	esac
+}
+
+gpu() {
+	# graphics=XX memory=XX video=XX PCIe=XX
+	eval $(nvidia-settings -q GPUUtilization -t | tr -d ,)
+	##cal $graphics $DP "${graphics}%"
+	print ${COL[gpu]}     "${RES[disp]}" "${graphics}% "
+	print ${COL[gputemp]} "${RES[temp]}" "$(nvidia-settings -q GPUCoreTemp -t)°C"
+	## shittiest way possible but it werks
+	#### mfw the shittest way becomes not shitty but not as shitty as the shittiest of the before
+	info() {
+		for get in NvidiaDriverVersion GPU{CoreTemp,CurrentFanSpeed,ResizableBar} RefreshRate3; do
+			local query="$(nvidia-settings -q $get -t | tr '\n' ' ')"
+			printf '%-20s - %s\n' ${get,,} "$query"
+			#local got="$got"$'\n'"$get: $query"
+		done
+		for usage in video PCIe memory graphics; do
+			printf '%-20s - %s\n' $usage $(eval echo $video)%
+		done
+		
+		#local got="$got"$'\n'"video usage: ${video}%"$'\n'"pcie usage: ${PCIe}%"
+		#local got="$got"$'\n'"memory usage: ${memory}%"$'\n'"graphics usage: ${graphics}%"
+		#column -s: -t <<< $got
+	}
+
+	[ ! -z $BLOCK_BUTTON ] && dunstify -r 4444 "$(info)"
+}
+
+music() {
+	read -r title < /tmp/dwmsiq.spotifytitle
+	read -r alart < /tmp/dwmsiq.spotifyalart
+	local artist=${alart%%\ -*}
+	print ${COL[mus]} "${MED[mus]}" "$artist - $title"
+}
+
+Spotify() {
+	echo $2 > /tmp/dwmsiq.spotifytitle
+	echo $3 > /tmp/dwmsiq.spotifyalart
+	pkill dwmblocks -RTMIN+7
+}
+
+audio() {
+	set -x
+	case $BLOCK_BUTTON in
+		1) pavucontrol ;;
+		3) volctl mute ;;
+		5) volctl -5%  ;;
+		4) volctl +5%  ;;
+	esac
+	vol="$(volctl getvol)"
+	{
+		# ok ngl this is pretty shitty but i aint got a choice
+		[  $vol = mute ] && print "${COL[snd]}" "${MED[ded]}" "${vol}"  && return 0
+		(( $vol <= 39 )) && print "${COL[snd]}" "${MED[low]}" "${vol}%" && return 0
+		(( $vol >= 79 )) && print "${COL[snd]}" "${MED[hgh]}" "${vol}%" && return 0
+		(( $vol >= 39 )) && print "${COL[snd]}" "${MED[mdm]}" "${vol}%" && return 0
+	}
+}
+
+# time(1) is already a thing
+pace() {
+	date="$(date '+%a %H:%M:%S')"
+	print "${COL[time]}" "${OTH[clock]}" "${date,,}"
+	[ ! -z $BLOCK_BUTTON ] && {
+		cal=$(cal)
+		today=$(date +%d)
+		body=$(tail -n+2 <<< $cal)
+		n "$(head -n1 <<< $cal)" "${body/$today/\<b\>$today\<\/b\>}"
+	}
+}
+
+net() {
+	[ "$(ip a s eno2 | awk '/state/ {print $9}')" = DOWN ] && print ${COL[netdn]} "${NET[dn]} " "down" && return 0
+	update() {
+	    sum=0
+	    for arg; do
+	        read -r i < "$arg"
+	        sum=$(( sum + i ))
+	    done
+	    cache=${XDG_CACHE_HOME:-$HOME/.cache}/${1##*/}net
+	    [ -f "$cache" ] && read -r old < "$cache" || old=0
+	    printf %d\\n "$sum" > "$cache"
+	    printf %d\\n $(( sum - old ))
+	}
+
+	rx=$(update /sys/class/net/[ew]*/statistics/rx_bytes)
+	tx=$(update /sys/class/net/[ew]*/statistics/tx_bytes)
+	print ${COL[netup]} "${NET[up]} " "$(numfmt --to=iec $rx) "
+	print ${COL[netdl]} "${NET[dl]} " "$(numfmt --to=iec $tx)"
+}
+
+disk() {
+	read -r temp < /sys/devices/pci0000:00/0000:00:1d.0/0000:04:00.0/nvme/nvme0/hwmon0/temp1_input
+	print ${COL[disk]}     "${RES[disk]}"
+	print ${COL[disktemp]} "${RES[temp]}" "${temp:0:2}°C"
+}
+
+
+
+[ ! -z $1 ] && $1
+
+#case $1 in
+#	cpu) cpu ;;
+#	mem) mem ;;
+#	gpu) gpu ;;
+#	date) _date ;;
+#	time) _time ;;
+#	music) music ;;
+#	audio) audio ;;
+#	Spotify)
+#	;;
+#esac

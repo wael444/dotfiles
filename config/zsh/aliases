@@ -1,0 +1,54 @@
+## color
+alias grep='grep --color=auto'
+alias dmesg='dmesg --color=always'
+
+## flags
+alias cp='cp -v'
+alias mv='mv -v'
+alias rm='rm -v'
+alias md='mkdir -pv'
+alias df='df -Th --sync'
+alias du='du -h'
+alias free='free -m'
+alias wget='wget --hsts-file=~/.cache/wget-hsts'
+alias bat='bat --style numbers,header --theme ansi'
+
+## misc
+alias doas='doas '
+alias sudo='doas '
+alias mkex='chmod -v a+x'
+alias mine='chown $USER:$USER -Rv'
+
+# shortcuts
+alias rf='rm -rf'
+alias asc='jp2a --color --color-depth=24'
+
+## lista
+alias exa='exa --color=always --group-directories-first'
+alias ls='exa -aF  -s type'
+alias la='exa -lab -s type --no-time'
+alias le='exa -lab -s type'
+alias lu='exa -lab -s time'
+alias tree='exa -aT -s type'
+
+# xbps
+alias Xi='doas xbps-install'
+alias xu='doas xbps-install -Syuv'
+alias xr='doas xbps-remove'
+
+# youtube-dl
+alias ytdln='yt-dlp -f bestvideo+bestaudio --restrict-filenames'
+alias ytdla='yt-dlp -f bestaudio --restrict-filenames'
+
+# misc
+alias rl='exec zsh'
+alias kwrwp='WINEPREFIX=~/.local/share/grapejuice/prefixes/player wineserver -k'
+alias qmkflash='doas qmk flash --keyboard idobao/id75/v1 --keymap wael'
+alias qmkkeymap='qmk json2c keyboards/idobao/id75/keymaps/wael/*.json -o keyboards/idobao/id75/keymaps/wael/keymap.c'
+alias csmp='doas make {uninstall,clean,install} && doas make clean'
+
+## edit
+alias e='$EDITOR'
+alias e.alias='e $HOME/.config/zsh/aliases'
+
+# vim: ft=sh

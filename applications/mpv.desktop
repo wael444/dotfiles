@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=Media Player
+Exec=mpv --loop=inf %U

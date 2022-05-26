@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+id=$RANDOM
+dunstify -r $id 'select color' && color=$(grabc)
+convert -size 256x256 xc:$color /tmp/color.png
+xclip -sel c <<< $color
+dunstify -r $id -I /tmp/color.png $color 'copied to clipboard'
+rm /tmp/color.png

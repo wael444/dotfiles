@@ -1,0 +1,5 @@
+#!/usr/bin/env -S sh
+pidof -q spotify && { dunstify 'spotify already running'; return 1 ;}
+spotify &
+sleep 0.3
+xdotool set_window --classname spotify --class Spotify --name "Spotify Sucks" $(wmctrl -l | awk 'END{print $1}')
