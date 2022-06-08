@@ -1,1 +1,2 @@
-xrdb -query | awk '/'$1':/ {print $2}'
+#!/usr/bin/env sh
+xrdb -query | awk '/'"$1"':/ {print $2}'

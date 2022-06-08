@@ -1,1 +1,2 @@
-xclip -sel c < $1
+#!/usr/bin/env sh
+xclip -sel c < "$@"

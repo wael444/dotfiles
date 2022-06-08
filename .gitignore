@@ -1,2 +1,3 @@
 config/ncspot/userstate.cbor
+config/spotifyd/password
 config/zsh/.zcompdump

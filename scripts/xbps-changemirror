@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
-confmirrors=(
-/etc/xbps.d/00-repository-main.conf
-/etc/xbps.d/10-repository-multilib-nonfree.conf
-/etc/xbps.d/10-repository-multilib.conf
-/etc/xbps.d/10-repository-nonfree.conf
-)
-
-doas tee ${confmirrors[0]} <<< "repository=$1/current"
-doas tee ${confmirrors[1]} <<< "repository=$1/current/multilib/nonfree"
-doas tee ${confmirrors[2]} <<< "repository=$1/current/multilib"
-doas tee ${confmirrors[3]} <<< "repository=$1/current/nonfree"
+for to in main {,multilib{,/nonfree},nonfree}; do
+	doas tee "/etc/xbps.d/${num:-00}-repository-${to//\//-}.conf" <<< "repository=${1:-https://repo-default.voidlinux.org}/current/${to#main}"
+	num=10
+done

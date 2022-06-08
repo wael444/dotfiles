@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+# shellcheck disable=SC2034
+for i in $(seq 0 16); do
+	n=${x:-2}
+	x=$((n*2))
+	y=$((x/2+x))
+	printf "\033[97m%s\n" "$x"
+	printf "\033[37m%s\n" "$y"
+done

@@ -1,6 +1,6 @@
 require('options')
 require('plugins')
-require('config')
 require('keybinds')
+require('config')
 vim.cmd([[colorscheme base16-gruvbox-dark-hard]])
 require('colors')

@@ -6,7 +6,7 @@
   +-----+-----+-----+-----+-----+-----+-----+
 
 
-  Description:    Minimalist, Simple, Keyboard Centered and based on SimpleFox. 🦊
+  Description:    Minimalist, Simple, Keyboard Centered and based on SimpleFox. 
                   What you get is a really simple responsive one-line layout using the new Proton UI.
 
                   > SimpleFox: https://github.com/migueravila/SimpleFox
@@ -49,7 +49,7 @@
     /* This will also work with custom colours from color.firefox.com. */
 
 
-    @media (prefers-color-scheme: dark) { :root {
+    :root {
 
         --window-colour:                     #1E2021;
         --secondary-colour:                  #191B1C;
@@ -75,36 +75,6 @@
         --uc-identity-color-purple-muted:    #786FA6FF;
 
     }}
-
-
-
-    @media (prefers-color-scheme: light) { :root {
-
-        --window-colour:                     #FAFAFC;
-        --secondary-colour:                  #EAEAEC;
-        --inverted-colour:                   #1E2021;
-
-        /* Containter Tab Colours */
-        --uc-identity-color-blue:            #1D65F5;
-        --uc-identity-color-turquoise:       #209FB5;
-        --uc-identity-color-green:           #40A02B;
-        --uc-identity-color-yellow:          #E49320;
-        --uc-identity-color-orange:          #FE640B;
-        --uc-identity-color-red:             #FC5C65;
-        --uc-identity-color-pink:            #EC83D0;
-        --uc-identity-color-purple:          #822FEE;
-
-        --uc-identity-color-blue-muted:      #1D65F5FF;
-        --uc-identity-color-turquoise-muted: #209FB5FF;
-        --uc-identity-color-green-muted:     #40A02BFF;
-        --uc-identity-color-yellow-muted:    #E49320FF;
-        --uc-identity-color-orange-muted:    #FE640BFF;
-        --uc-identity-color-red-muted:       #FC5C65FF;
-        --uc-identity-color-pink-muted:      #EC83D0FF;
-        --uc-identity-color-purple-muted:    #822FEEFF;
-
-    }}
-
 
 
 :root {

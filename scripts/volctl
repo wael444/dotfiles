@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-id="991049"
+# id="991049"
 sink="@DEFAULT_SINK@"
 
 getvol() {
@@ -12,7 +12,7 @@ getvol() {
 
 case $1 in
 	mute) pactl set-sink-mute $sink toggle ;;
-    getvol) getvol && echo $vol && exit ;;
+    getvol) getvol && printf '%s' "$vol" && exit 0 ;;
     *) pactl set-sink-volume $sink "$@" ;;
 esac
 

@@ -18,10 +18,11 @@ alias doas='doas '
 alias sudo='doas '
 alias mkex='chmod -v a+x'
 alias mine='chown $USER:$USER -Rv'
+alias udevrel='udevadm control --reload-rules && udevadm trigger'
 
 # shortcuts
 alias rf='rm -rf'
-alias asc='jp2a --color --color-depth=24'
+alias jp2aa='jp2a --color --color-depth=24'
 
 ## lista
 alias exa='exa --color=always --group-directories-first'
@@ -32,7 +33,9 @@ alias lu='exa -lab -s time'
 alias tree='exa -aT -s type'
 
 # xbps
-alias Xi='doas xbps-install'
+alias xI='doas xbps-install'
+alias xver='xbps-query -p pkgver'
+alias xQ='xbps-query'
 alias xu='doas xbps-install -Syuv'
 alias xr='doas xbps-remove'
 
@@ -40,15 +43,21 @@ alias xr='doas xbps-remove'
 alias ytdln='yt-dlp -f bestvideo+bestaudio --restrict-filenames'
 alias ytdla='yt-dlp -f bestaudio --restrict-filenames'
 
+# firefox arkenfox userjs
+alias arku='./updater.sh -s'
+alias arks='./prefsCleaner.sh -s'
+
 # misc
 alias rl='exec zsh'
 alias kwrwp='WINEPREFIX=~/.local/share/grapejuice/prefixes/player wineserver -k'
 alias qmkflash='doas qmk flash --keyboard idobao/id75/v1 --keymap wael'
 alias qmkkeymap='qmk json2c keyboards/idobao/id75/keymaps/wael/*.json -o keyboards/idobao/id75/keymaps/wael/keymap.c'
 alias csmp='doas make {uninstall,clean,install} && doas make clean'
+alias nvs='nvidia-settings --config=$XDG_CONFIG_HOME/nvidia/settings'
 
 ## edit
 alias e='$EDITOR'
+alias e.rc='e $HOME/.config/zsh/.zshrc'
 alias e.alias='e $HOME/.config/zsh/aliases'
 
 # vim: ft=sh

@@ -16,32 +16,34 @@ helperfiles() {
 }
 
 helperdir() {
-	mkdir -pv $to/$2
-	[ -e $to/$2/$1 ] && rm -rfv $to/$2/$1
-	ln -sfv $from/$1 $to/$2/$1
+	mkdir -pv "$to/$2"
+	[ -e "$to/$2/$1" ] && rm -rfv "$to/$2/$1"
+	ln -sfv "$from/$1" "$to/$2/$1"
 }
 
-helperfiles files
+[ -e "$to"/.zshenv ] && rm -rfv "$to"/.zshenv
+ln -sfv "$from"/.zshenv "$to"/.zshenv
 helperfiles config ".config"
 helperdir txt ".local/share"
 helperfiles applications ".local/share/applications"
 helperdir scripts ".local/bin"
 
 ## firefox
-firefoxpath=$to/.mozilla/firefox
-firefoxprofile=$firefoxpath/default
-[ -d $firefoxpath ] && rm -rfv $firefoxpath
-mkdir -pv $firefoxprofile
-cat << EOF > $firefoxpath/profiles.ini
-[Profile0]
-Name=${firefoxprofile##*/}
-IsRelative=1
-Path=${firefoxprofile##*/}
-EOF
-ln -sfv $from/firefox/user-overrides.js $firefoxprofile
-ln -sfv $from/firefox/chrome $firefoxprofile
-for filestoget in user.js prefsCleaner.sh updater.sh; do
-	url=https://raw.githubusercontent.com/arkenfox/user.js/master
-	wget -q --show-progress $url/$filestoget -O $firefoxprofile/$filestoget
-done
-chmod -v a+x $firefoxprofile/*.sh
+#### left to be done manually
+#firefoxpath=$to/.mozilla/firefox
+#firefoxprofile=$firefoxpath/default
+#[ -d $firefoxpath ] && rm -rfv $firefoxpath
+#mkdir -pv $firefoxprofile
+#cat << EOF > $firefoxpath/profiles.ini
+#[Profile0]
+#Name=${firefoxprofile##*/}
+#IsRelative=1
+#Path=${firefoxprofile##*/}
+#EOF
+#ln -sfv $from/firefox/user-overrides.js $firefoxprofile
+#ln -sfv $from/firefox/chrome $firefoxprofile
+#for filestoget in user.js prefsCleaner.sh updater.sh; do
+#	url=https://raw.githubusercontent.com/arkenfox/user.js/master
+#	curl $url/$filestoget -o $firefoxprofile/$filestoget
+#done
+#chmod -v a+x $firefoxprofile/*.sh

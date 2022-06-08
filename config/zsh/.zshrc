@@ -1,21 +1,12 @@
-_soth=( /usr/share/grc/grc.zsh /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh )
 source ~/.zshenv
-for tbs in {insulter,timer,thefuck}.zsh aliases functions; do source $ZDOTDIR/$tbs; done
-for tbs in ${_soth[@]}; do source $tbs; done && unset _soth
+for tbs in {insulter,timer}.zsh aliases; do source $ZDOTDIR/$tbs; done
+source /usr/share/grc/grc.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# history
-HISTFILE="$XDG_CACHE_HOME/history"
-HISTSIZE=4096
-SAVEHIST=4096
-
-# misc
 bindkey -e
 stty stop undef
-
-# prompt
-__zcmdtime=1
-ZLE_RPROMPT_INDENT=0
 setopt PROMPT_SUBST
+setopt interactivecomments
 PROMPT='%(?..%B%F{1}%?%b%f )%M[%~]$(zsh_cmdtime )%# '
 
 # autocomplete
@@ -26,20 +17,20 @@ compinit
 _comp_options+=(globdots)
 
 # set title before command
-function precmd () {
+function precmd() {
 #  print -Pn -- '\e]2; %~\a'
 }
 
 # load timer before execution and print its relative title name
-function preexec () {
+function preexec() {
   zsh_cmdtime_start=$(zsh_cmdtime_time)
 #  print -Pn -- '\e]2; $ ' && print -n -- "${(q)1}\a"
 }
 
-case $((RANDOM % 16)) in
-	2) cat $XDG_DATA_HOME/txt/konata   ;;
-	4) cat $XDG_DATA_HOME/txt/niko     ;;
-	6) cat $XDG_DATA_HOME/txt/ritualz  ;;
-	10) print -P '%B%F{1}%m%f%b: fuck you' ;;
-	15) cat $XDG_DATA_HOME/txt/pan      ;;
+# numbers start from 0
+case $((RANDOM % 7)) in
+	3) cat $(printf "%s\n" $XDG_DATA_HOME/txt/* | sort -R | head -1) ;;
+	4) print -P '%B%F{1}%m%f%b: kys' ;;
+	5) print -P '%B%F{1}%m%f%b: what unspeakable shit are we going to do today?' ;;
+	6) print -P '%B%F{1}%m%f%b: fuck you' ;;
 esac

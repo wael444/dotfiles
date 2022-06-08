@@ -1,37 +1,21 @@
-! special
 *.foreground:   #dfdfdf
 *.background:   #000000
 *.cursorColor:  #dfdfdf
-
-! black
 *.color0:       #202020
 *.color8:       #404040
-
-! red
 *.color1:       #d04444
 *.color9:       #d04444
-
-! green
 *.color2:       #8fbb3d
 *.color10:      #8fbb3d
-
-! yellow
 *.color3:       #fac549
 *.color11:      #fac549
-
-! blue
 *.color4:       #619bbb
 *.color12:      #619bbb
-
-! magenta
 *.color5:       #9463d1
 *.color13:      #9463d1
-
-! cyan
 *.color6:       #67b58d
 *.color14:      #67b58d
-
-! white
 *.color7:       #bbbbbb
 *.color15:      #909090
 
+# vim: ft=xpm

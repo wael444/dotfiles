@@ -1,6 +1,5 @@
 #!/usr/bin/env -S bash
-
-fifo="$XDG_RUNTIME_DIR/${0##*/}"
+# shellcheck disable=SC2154
 
 ## helpers
 function notify() {
@@ -9,17 +8,17 @@ function notify() {
 
 ## the real
 function time() {
-	local time="$(date '+%a %H:%M:%S')"
-	printf "%s%s" "^C3^ ^d^" "${time,,}"
+	time="$(date '+%a %H:%M:%S')"
+	printf "%s" "${time,,}"
 
-	[ -z $BLOCK_BUTTON ] || {
+	[ -n "$BLOCK_BUTTON" ] && {
 		# unforunately this is the only good way to do this in shell
-		local cal="$(cal)"
+		cal="$(cal)"
 		local cal="${cal%$'\n'*}" # removes useless new line
 		local head="${cal%%$'\n'*}" # removes all after first(?) new line
 		local body="${cal/$head$'\n'/}" # remove all after $head 
-		local curday="$(date +%d)"
-		local head="    $(date '+%Y %m (%B)')"
+		curday="$(date +%d)"
+		head="    $(date '+%Y %m (%B)')"
 		notify "$head" "${body/$curday/<b>$curday</b>}"
 	}
 }
@@ -29,10 +28,10 @@ function cpu() {
 	read -r loadavg < /proc/loadavg
 	loadavg="${loadavg%%\ *}"
 	temp="${temp:0:2}°C"
-	printf "%s %s %s%s" "^C3^﨎^d^" "$temp" "^C3^ ^d^" "$loadavg"
+	printf "%s %s"  "$temp" "$loadavg"
 
 	case $BLOCK_BUTTON in
-		1) notify "cpu usage" "\n$(ps -ewo %cpu,cmd --sort=-%cpu --no-headers | head -20 | cut -c-32 )" ;;
+		1) notify "cpu usage" "\n$(ps -ewo %cpu,cmd --sort=-%cpu --no-headers | head -20 | cut -c-50 )" ;;
 		3)
 			read -r gov < /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 			read -r freq < /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
@@ -51,19 +50,20 @@ function cpu() {
 function gpu() {
 	## I KNOW EVAL IS UNSAFE I JUST DON'T KNOW HOW ELSE
 	# graphics=XX memory=XX video=XX PCIe=XX
-	eval $(nvidia-settings -q GPUUtilization -t | tr -d ,)
-	printf "%s%s %s%s" '^C3^﨎 ^d^' "$(nvidia-settings -q GPUCoreTemp -t)°C" '^C3^ ^d^' "${graphics}% "
+	eval "$(nvidia-settings -q GPUUtilization -t | tr -d ,)"
 
-	[ ! -z $BLOCK_BUTTON ] && {
+	printf "%s %s" "$(nvidia-settings -q GPUCoreTemp -t)°C" "${graphics}% "
+
+	[ -n "$BLOCK_BUTTON" ] && {
 		notify "querying information..."
 		notify "graphics card information" "$(
 			# ok this is pretty shitty but it werks
 			for get in NvidiaDriverVersion GPU{CoreTemp,CurrentFanSpeed,ResizableBar} RefreshRate3; do
-				local query="$(nvidia-settings -q $get -t | tr '\n' ' ')"
+				query="$(nvidia-settings -q $get -t | tr '\n' ' ')"
 				printf '%-20s - %s\n' "$get" "$query"
 			done
 			for usage in video PCIe memory graphics; do
-				printf '%-20s - %s\n' $usage $(eval echo $video)%
+				printf '%-20s - %s\n' $usage "$(eval echo "$video")"%
 			done
 		)"
 	}
@@ -72,16 +72,16 @@ function gpu() {
 function mem() {
 	while IFS=':k ' read -r n v _; do case $n in MemAvailable) a=$v ;; MemTotal) t=$v ;; esac 
 	done < /proc/meminfo
-	local usg=$(calc "(($t-$a) / $t) * 100")
+	usg=$(calc "(($t-$a) / $t) * 100")
 	local usg=${usg#*\~}
 	local usg=${usg%.*}
-	printf "%s%s" "^C3^ ^d^" "${usg}%"
+	printf "%s" "${usg}%"
 
 	case $BLOCK_BUTTON in
 		1) notify "memory usage" \
-			"\n$(ps -ewo rss,%mem,cmd --sort -rss --no-headers | head -20 | cut -c-32 \
-			| while read -r rss rest; do echo $((rss/1024))"MB -" $rest; done)" ;;
-		3) notify "$(printf '%-10s - %s\n%-10s - %s' "$((t/1024))MiB" "total" "$(($((t-$a))/1024))MiB" "used")" ;;
+			"\n$(ps -axo rss,%mem,cmd --sort -rss --no-headers | head -20 | cut -c-50 \
+			| while read -r rss rest; do echo $((rss/1024))"MB -" "$rest"; done)" ;;
+		3) notify "$(printf '%-10s - %s\n%-10s - %s' "$((t/1024))MiB" "total" "$(($((t-a))/1024))MiB" "used")" ;;
 	esac
 }
 
@@ -89,27 +89,27 @@ function net() {
 	interface=/sys/class/net/eno2/
 	read -r status < $interface/operstate
 	case $status in
-		down) printf "%s" "^C3^ ^d^";;
+		down) printf "%s" "^C4^ ^d^";;
 	esac
 	update() {
 		cache="$XDG_CACHE_HOME/${0##*/}_${1##*/}"
-		read -r old < $cache
-		read -r new < $1
-		printf $new > $cache
+		read -r old < "$cache"
+		read -r new < "$1"
+		printf '%s' "$new" > "$cache"
 		numfmt --to=iec "$(( new - old ))"
 	}
 	printf "%s%s %s%s" \
-		"^C3^^d^ " "$(update $interface/statistics/rx_bytes)" \
-		"^C3^^d^ " "$(update $interface/statistics/tx_bytes)"
+		"^C4^^d^ " "$(update $interface/statistics/rx_bytes)" \
+		"^C4^^d^ " "$(update $interface/statistics/tx_bytes)"
 }
 
 function disk() {
 	read -r temp < /sys/devices/pci0000:00/0000:00:1d.0/0000:04:00.0/nvme/nvme0/hwmon0/temp1_input
-	printf "%s%s" '^C3^﫭 ^d^' "${temp:0:2}°C"
+	printf "%s%s" 'COLOR3﫭 ^d^' "${temp:0:2}°C"
 }
 
 function audio() {
-	printf "%s %s" '墳' "$(volctl getvol)%"
+	printf "%s %s" 'COLOR3墳^d^' "$(volctl getvol)%"
 	case $BLOCK_BUTTON in
 		1) pavucontrol ;;
 		3) volctl mute ;;
@@ -117,18 +117,5 @@ function audio() {
 		4) volctl +5%  ;;
 	esac
 }
-
-
-
-#function music() {
-#	read -r known < ${fifo}spot
-#	printf "%s" "$known"
-#}
-
-#function Spotify() {
-#	[ ! -e ${fifo}.spot ] && mkfifo ${fifo}spot
-#	echo "$@" > ${fifo}.spot
-#	pkill -RTMIN+7 dwmblocks
-#}
 
 $1 "${@:2}"

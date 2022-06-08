@@ -1,25 +1,31 @@
 #!/usr/bin/env sh
-# fusion of monesonn/doasedit and koalagang/doasedit
-set -ex
+## i know this script is pretty shitty but it werks yk, it's also mostly copied too
+# helper function
+err() { echo "$1" && exit 1 ; }
+check() { command -v "$1" >/dev/null || err "dep $1 not met" ; }
 
-err () { echo "$1" && exit 1 ; }
+# vars
+file="$1"
+temp="$(mktemp)"
+atmpt=0
 
 # checking
-[ ! $(id -u) -eq 0 ] || err 'cannot be run as root'
+check nvim
+check doas
+[ ! "$(id -u)" -eq 0 ] || err 'cannot be run as root'
 [ $# = 0 ] && err 'no arguments'
 [ $# = 1 ] || err 'too many arguments'
-[ $EDITOR ] || err 'no editor set'
+[ ! "$EDITOR" ] && err 'no EDITOR env var set'
 
 # creating
-temp=$(mktemp --suffix=dead)
-[ -f $1 ] && doas cat $1 > $temp
-$EDITOR $temp
-cmp "$1" $temp -s && echo "$1 unchanged" && rm -v $temp && exit 0
+[ -f "$file" ] && doas cat "$1" > "$temp"
+filetype="$(nvim --headless -c ":verbose set ft ?" "$1" +quit 2>/dev/null | grep filetype)"
+nvim -c "set $filetype" "$temp"
+doas cmp "$file" "$temp" -s && err "$file unchanged"
 
 # writing
-atmpt=0
-until doas dd if=$temp of=$1; do
-    atmpt=$((attempt + 1))
+until doas dd if="$temp" of="$1"; do
+    atmpt=$((atmpt + 1))
     [ $atmpt -ge 3 ] && err "cannot accept changes, manually cp $temp"
 done
-rm -v $temp
+rm -v "$temp"

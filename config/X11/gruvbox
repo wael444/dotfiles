@@ -16,3 +16,5 @@
 *.color14: #8ec07c
 *.color7:  #a89984
 *.color15: #ebdbb2
+
+# vim: ft=xpm

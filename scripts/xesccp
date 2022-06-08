@@ -1,1 +1,2 @@
-echo -e '\u001B' | xclip -sel c
+#!/usr/bin/env sh
+printf '\u001B' | xclip -sel c

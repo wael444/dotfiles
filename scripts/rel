@@ -1,7 +1,6 @@
-#!/usr/bin/env -S bash -x
+#!/usr/bin/env -S sh
 case $1 in
-	ex)
-		entr sh -c "clear && $2" <<< $(which ${2%%\ *});;
-	rex) entr sh -c "clear && $2" <<< $3;;
-	re) entr -p tail -f "${2%%\ *}" <<< "$2" ;;
+	ex) which "${2%%\ *}" | entr sh -c "clear && $2" ;;
+	rex) echo "$3" | entr sh -c "clear && $2" ;;
+	re) echo "$2" | entr -p tail -f "${2%%\ *}" ;;
 esac

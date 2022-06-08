@@ -1,8 +1,6 @@
 #!/usr/bin/env -S sh
 notif() { dunstify -t 1400 -r 46198 "$@" ; }
 case $# in
-	0) while read stdin; do notif "$stdin" ; done ;;
-	1) while read stdin; do notif "$1" "$stdin" ; done ;;
-	2) while read stdin; do case $stdin in *$2*);; *)notif "$1" "$stdin" ;; esac done ;;
-	3) while read stdin; do case $stdin in *$2*);; *$3*);; *)notif "$1" "$stdin" ;; esac done ;;
+	0) while read -r stdin; do notif "$stdin" ; done ;;
+	1) while read -r stdin; do notif "$1" "$stdin" ; done ;;
 esac

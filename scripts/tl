@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-[ $(tr -cd '01' < /dev/urandom | head -c1) = 0 ] && printf '\033[32mYes.\033[0m\n' || printf '\033[31mNo.\033[0m\n'
+[ "$(tr -cd '01' < /dev/urandom | head -c1)" = 0 ] && printf '\033[32mYes.\033[0m\n' || printf '\033[31mNo.\033[0m\n'

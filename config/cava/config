@@ -1,6 +1,6 @@
 [general]
 framerate = 144
-sensitivity = 10
+sensitivity = 30
 autosens = 0
 
 [output]

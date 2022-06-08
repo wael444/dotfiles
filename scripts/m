@@ -1,0 +1,38 @@
+#!/usr/bin/env sh
+
+# helpers
+prompt() {
+	# i know this is incorrect usage of printf but it works
+	[ "$(printf "nope.\nsure!!" | fzf)" = "sure!!" ] && return 0;
+}
+
+# functions
+kill() {
+	choose="$(ps -au "$USER" -o pid,cmd --no-header | fzf)"
+	[ -z "$choose" ] && exit 127
+	prompt && printf '%s' "$choose" | awk '{print $1}' | xargs /usr/bin/kill -9
+}
+
+path() {
+	for d in $(echo "$PATH" | sed 's/:/ /g'); do
+			find "$d/" -perm /111 2>/dev/null
+	done | sed 's#.*/##' | sort -Ru
+}
+
+getprog() {
+	choose="$(path | fzf --print-query | tail -1)"
+	[ -z "$choose" ] && exit 127
+	printf '%s\n' "$choose"
+}
+
+ex() {
+	set -- "$(getprog)"
+	"$@" 2>&1 | nott "$1" &
+}
+
+run() {
+	"$(getprog)"
+}
+
+
+[ -n "$1" ] && $1
