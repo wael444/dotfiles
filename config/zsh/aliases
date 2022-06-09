@@ -33,11 +33,11 @@ alias lu='exa -lab -s time'
 alias tree='exa -aT -s type'
 
 # xbps
-alias xI='doas xbps-install'
-alias xver='xbps-query -p pkgver'
-alias xQ='xbps-query'
+alias xe='doas xbps-install'
+alias xg='xbps-query'
 alias xu='doas xbps-install -Syuv'
 alias xr='doas xbps-remove'
+alias xver='xbps-query -p pkgver'
 
 # youtube-dl
 alias ytdln='yt-dlp -f bestvideo+bestaudio --restrict-filenames'
@@ -49,15 +49,16 @@ alias arks='./prefsCleaner.sh -s'
 
 # misc
 alias rl='exec zsh'
-alias kwrwp='WINEPREFIX=~/.local/share/grapejuice/prefixes/player wineserver -k'
-alias qmkflash='doas qmk flash --keyboard idobao/id75/v1 --keymap wael'
-alias qmkkeymap='qmk json2c keyboards/idobao/id75/keymaps/wael/*.json -o keyboards/idobao/id75/keymaps/wael/keymap.c'
 alias csmp='doas make {uninstall,clean,install} && doas make clean'
 alias nvs='nvidia-settings --config=$XDG_CONFIG_HOME/nvidia/settings'
+alias hst="history 1 -1 | cut -c 8- | sort | uniq | fzf | tr -d '\n' | xclip -sel c"
 
 ## edit
 alias e='$EDITOR'
-alias e.rc='e $HOME/.config/zsh/.zshrc'
-alias e.alias='e $HOME/.config/zsh/aliases'
+alias de='doasedit'
+
+# these two are life safing
+alias ea='e "$(fd -Hc never . "$HOME"  -t f | fzf)"'
+alias c='cd "$(fd -Hc never . "$HOME" -t d | fzf)"'
 
 # vim: ft=sh

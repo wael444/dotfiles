@@ -14,25 +14,35 @@ kill() {
 }
 
 path() {
-	for d in $(echo "$PATH" | sed 's/:/ /g'); do
+	for d in $(echo "$PATH" | sed "s/:/ /g"); do
 			find "$d/" -perm /111 2>/dev/null
-	done | sed 's#.*/##' | sort -Ru
+	done | sed 's#.*/##' | sort -u
 }
 
-getprog() {
-	choose="$(path | fzf --print-query | tail -1)"
-	[ -z "$choose" ] && exit 127
-	printf '%s\n' "$choose"
+pathfd() {
+	for d in $(echo "$PATH" | sed "s/:/ /g"); do
+		fd -Hc never -t x -t l . "$d" 2>/dev/null
+	done | sed 's#.*/##' | sort -u
 }
+#		fd . "$PATH" 
+#			find "$d/" -perm /111 2>/dev/null
+#	done
 
-ex() {
-	set -- "$(getprog)"
-	"$@" 2>&1 | nott "$1" &
-}
-
-run() {
-	"$(getprog)"
-}
+#getprog() {
+#	set -xe
+#	choose="$(path | fzf --print-query | tail -1)"
+#	[ -z "$choose" ] && exit 127
+#	printf '%s\n' "$choose"
+#}
+#
+#run() {
+#	set -- "$(getprog)"
+#	echo "$@"
+#	[ -z "$*" ] || $* 2>&1 | nott "$1" &
+#
+#exec() {
+#	"$(getprog)"
+#}
 
 
 [ -n "$1" ] && $1

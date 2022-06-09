@@ -28,6 +28,9 @@ helperdir txt ".local/share"
 helperfiles applications ".local/share/applications"
 helperdir scripts ".local/bin"
 
+# certain files need to be created for environment variables
+mkdir -pv "$to"/gtk-{3,2}.0 "$to"/.local/share/{gnupg}
+
 ## firefox
 #### left to be done manually
 #firefoxpath=$to/.mozilla/firefox

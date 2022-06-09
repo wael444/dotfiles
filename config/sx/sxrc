@@ -1,9 +1,1 @@
-xrdb -load $XRESOURCES
-
-pgrep pipewire >/dev/null && pkill pipewire
-pipewire &
-
-xwallpaper --zoom /data/media/wallpapers/voidchan.jpg
-exec dbus-launch --exit-with-session --sh-syntax ${@:-dwm}
-
-# vim: ft=sh
+exec dwm
