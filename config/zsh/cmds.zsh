@@ -34,7 +34,7 @@ alias \
 	udevrel='udevadm control --reload-rules && udevadm trigger' \
 	ytdla='yt-dlp -f bestaudio --restrict-filenames' \
 	ytdln='yt-dlp -f bestvideo+bestaudio --restrict-filenames' \
-	gp='tr -dc "A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_`{|}~" </dev/urandom | head -c "${1:-128}"'
+	gp='tr -dc "A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_`{|}~" </dev/urandom | head -c "${1:-128}"' \
 	csmp='doas make {uninstall,clean,install} && doas make clean' 
 
 # exa
