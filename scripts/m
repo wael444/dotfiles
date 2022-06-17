@@ -1,48 +1,35 @@
-#!/usr/bin/env sh
+#!/usr/bin/env sh 
 
-# helpers
 prompt() {
-	# i know this is incorrect usage of printf but it works
-	[ "$(printf "nope.\nsure!!" | fzf)" = "sure!!" ] && return 0;
+	[ "$(printf "nope\nsure!!" | fzf --height=1 --no-info)" = "sure!!" ] && return 0;
 }
 
-# functions
 kill() {
 	choose="$(ps -au "$USER" -o pid,cmd --no-header | fzf)"
 	[ -z "$choose" ] && exit 127
 	prompt && printf '%s' "$choose" | awk '{print $1}' | xargs /usr/bin/kill -9
 }
 
+# shellcheck disable=SC2086
 path() {
-	for d in $(echo "$PATH" | sed "s/:/ /g"); do
-			find "$d/" -perm /111 2>/dev/null
-	done | sed 's#.*/##' | sort -u
+	path=$(echo "$PATH" | sed 's/:/\ /g')
+	fd -HLc never -d1 -t x . $path | sed 's|.*/||' | sort -u 
+} 2>/dev/null
+
+run() {
+	file="${XDG_CACHE_HOME:-$HOME/.cache}/${0##*/}-dwmrun"
+	st -t run -e sh -c "m path | fzf --print-query | tail -1 > $file"
+	read -r prog < "$file"
+	[ -n "$prog" ] 
+	$prog 2>&1 | nott "$prog" &
+	rm "$file"
 }
 
-pathfd() {
-	for d in $(echo "$PATH" | sed "s/:/ /g"); do
-		fd -Hc never -t x -t l . "$d" 2>/dev/null
-	done | sed 's#.*/##' | sort -u
+[ -z "$1" ] && { 
+	echo "usage: ${0##*/} [prompt] [kill] [path] [dwmrun]"
+	exit
 }
-#		fd . "$PATH" 
-#			find "$d/" -perm /111 2>/dev/null
-#	done
 
-#getprog() {
-#	set -xe
-#	choose="$(path | fzf --print-query | tail -1)"
-#	[ -z "$choose" ] && exit 127
-#	printf '%s\n' "$choose"
-#}
-#
-#run() {
-#	set -- "$(getprog)"
-#	echo "$@"
-#	[ -z "$*" ] || $* 2>&1 | nott "$1" &
-#
-#exec() {
-#	"$(getprog)"
-#}
-
-
-[ -n "$1" ] && $1
+func="$1" 
+shift
+[ -n "$func" ] && $func "$@"

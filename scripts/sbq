@@ -1,9 +1,12 @@
 #!/usr/bin/env -S bash
-# shellcheck disable=SC2154
 
 ## helpers
 function notify() {
 	dunstify -r 64219 "$@"
+}
+
+function wall() {
+	ps -ewo pid,%cpu,%mem,cmd --sort=-%cpu | cut -c-90
 }
 
 ## the real
@@ -47,6 +50,7 @@ function cpu() {
 	esac
 }
 
+	# shellcheck disable=SC2154
 function gpu() {
 	## I KNOW EVAL IS UNSAFE I JUST DON'T KNOW HOW ELSE
 	# graphics=XX memory=XX video=XX PCIe=XX
@@ -86,18 +90,18 @@ function mem() {
 }
 
 function net() {
-	interface=/sys/class/net/eno2/
+	local interface=/sys/class/net/eno2/
 	read -r status < $interface/operstate
-	case $status in
-		down) printf "%s" "^C4^ ^d^";;
-	esac
+	[ "$status" = down ] && printf "%s" "^C4^ ^d^"
+
 	update() {
-		cache="$XDG_CACHE_HOME/${0##*/}_${1##*/}"
+		cache="${XDG_CACHE_HOME:-$HOME/.cache}/${0##*/}_${1##*/}"
 		read -r old < "$cache"
 		read -r new < "$1"
 		printf '%s' "$new" > "$cache"
 		numfmt --to=iec "$(( new - old ))"
 	}
+
 	printf "%s%s %s%s" \
 		"^C4^^d^ " "$(update $interface/statistics/rx_bytes)" \
 		"^C4^^d^ " "$(update $interface/statistics/tx_bytes)"

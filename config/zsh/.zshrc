@@ -1,36 +1,34 @@
-source ~/.zshenv
-for tbs in {insulter,timer}.zsh aliases; do source $ZDOTDIR/$tbs; done
+source $HOME/.zshenv
+source $ZDOTDIR/cmds.zsh
+source $ZDOTDIR/cmdtime.zsh
+source $ZDOTDIR/cmdnotfound.zsh
 source /usr/share/grc/grc.zsh
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 bindkey -e
 stty stop undef
+
 setopt PROMPT_SUBST
 setopt interactivecomments
-PROMPT='%(?..%B%F{1}%?%b%f )%M[%~]$(zsh_cmdtime )%# '
-
-# autocomplete
 autoload -U compinit
-zstyle ':completion:*' menu select
 zmodload zsh/complist
-compinit
+zstyle ':completion:*' menu select
+
+__cmdtime=1
 _comp_options+=(globdots)
+__title="$TERM:%n@%m[%~]"
+PROMPT='%(?..%B%F{1}%?%b%f )%~$(_cmdtime f)%# '
 
-# set title before command
-function precmd() {
-#  print -Pn -- '\e]2; %~\a'
-}
+compinit
 
-# load timer before execution and print its relative title name
+function precmd()  { print -Pn -- '\e]2;${__title}\a' }
 function preexec() {
-  zsh_cmdtime_start=$(zsh_cmdtime_time)
-#  print -Pn -- '\e]2; $ ' && print -n -- "${(q)1}\a"
+	__scmdtime="$(_cmdtime b)"
+	print -Pn -- '\e]2;${__title}%% ${(q)1}\a'
 }
 
-# numbers start from 0
 case $((RANDOM % 7)) in
 	3) cat $(printf "%s\n" $XDG_DATA_HOME/txt/* | sort -R | head -1) ;;
+	2) sf ;;
 	4) print -P '%B%F{1}%m%f%b: kys' ;;
-	5) print -P '%B%F{1}%m%f%b: what unspeakable shit are we going to do today?' ;;
 	6) print -P '%B%F{1}%m%f%b: fuck you' ;;
 esac

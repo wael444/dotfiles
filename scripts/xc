@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+case "$1" in
+	f) xclip -sel c < "$2" ;;
+	sub) printf '\x20\xF0\x9F\x91\x89\xF0\x9F\x91\x88' | xclip -sel c ;;
+	esc) printf '\x1B' | xclip -sel c ;;
+	*) echo "usage: ${0##*/} [f] [sub] [esc]" ;;
+esac

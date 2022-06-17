@@ -1,1 +1,3 @@
-exec dwm
+pipewire &
+xwallpaper --zoom mrw3jg6mfq591.jpg 
+exec dbus-launch dwm 

@@ -28,7 +28,7 @@
 	separator_height = 2
 	gap_size = 0
     frame_width = 2
-    frame_color = "#619bbb"
+    frame_color = "#928374"
     separator_color = frame
 	corner_radius = 0
 
@@ -101,19 +101,19 @@
 
 
 [urgency_low]
-    background = "#000000"
-    foreground = "#dfdfdf"
+    background = "#1d2021"
+    foreground = "#ebdbb2"
     timeout = 10
 
 [urgency_normal]
-    background = "#000000"
-    foreground = "#dfdfdf"
+    background = "#1d2021"
+    foreground = "#ebdbb2"
     timeout = 10
 
 [urgency_critical]
-    background  = "#000000"
-    foreground  = "#dfdfdf"
-    frame_color = "#d04444"
+    background  = "#1d2021"
+    foreground  = "#ebdbb2"
+    frame_color = "#cc241d"
     timeout = 0
 
 # Every section that isn't one of the above is interpreted as a rules to
@@ -241,7 +241,6 @@
 #
 [Spotify]
 	appname = Spotify
-	frame_color = "#8fbb3d"
-	script = sbq
+	frame_color = "#98971a"
 #
 # vim: ft=cfg

@@ -1,7 +1,0 @@
-#!/usr/bin/env -S sh -x
-xrdb "$XRESOURCES"
-pkill -USR1 st
-#xsetroot -name "fsignal:40"
-#spicetify apply
-xsetroot -solid "$(xdbq color0)"
-shgen ~/.config/nvim/lua/colors.lua.shgen ~/.config/nvim/lua/colors.lua

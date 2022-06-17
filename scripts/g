@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-clipboard="$(xclip -o)"
-echo "${clipboard#https://}"

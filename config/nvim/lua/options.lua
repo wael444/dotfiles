@@ -14,7 +14,7 @@ opt.smarttab      = true
 -- opt.retab      = true
 opt.tabstop       = 4
 opt.shiftwidth    = 4
-opt.listchars     = { eol = '↲', nbsp = '␣'}
+opt.listchars     = { eol = '↲', nbsp = '␣', tab = '→ ' }
 
 -- appearance
 opt.number        = true

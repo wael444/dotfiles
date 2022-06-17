@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+case $1 in 
+	-r)
+		xrdb "$XRESOURCES"
+		pkill -USR1 st
+		#xsetroot -name "fsignal:40"
+		#spicetify apply
+		xsetroot -solid "$(xdbq color0)"
+		shgen ~/.config/nvim/lua/colors.lua.shgen ~/.config/nvim/lua/colors.lua
+	;;
+	-q) xrdb -query | awk '/'"$1"':/ {print $2}' ;;
+	*) echo "usage: ${0##*} [-r] [-q]"
+esac

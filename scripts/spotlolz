@@ -3,6 +3,7 @@ userid=31ainet5mbryzxzo2f6h5fyu7hsq
 
 # helpers
 hand() {
+	# yes im very aware of this, it is expired anyway.
 	local oauth=BQBpOPXRrVv-IgnCH96GaZcRUiJYW5AhCxD87N_0UfdX6-K06WV5DG68QRT4yPOxuc1QKmEWv-KFzO6_xAiyMXTtW-jwV4LCxiac-y6aoI6N2Oir086CH8fZ7zKt_sAE3rCeMFV2kQfvD3ZpYMRS3NabUKegVt9DbqSzkm7M-53H0dMK4ZbNjSXCJHcZcVK8IbEQlAm2BpzKDo_2WOMMsNwLZyfZKj8CoDvqatOdJz86zDKMCw1wv_KcIVIc9WOUhUigxUNKitO1oMgtRd7CZshCH3vIcq392q6pvZWFr--SELr1
 	curl -X "$1" "https://api.spotify.com/v1/$2" "${@:3}" -H "Authorization: Bearer $oauth"
 }

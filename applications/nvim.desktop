@@ -2,4 +2,4 @@
 Type=Application
 Name=File Manager
 Terminal=true
-Exec=st -e lf %u
+Exec=st -e nvim %u

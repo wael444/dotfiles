@@ -3,7 +3,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 
-export PATH="$PATH:$HOME/.local/bin:$HOME/.local/bin/scripts"
+export PATH="$PATH:$HOME/.local/bin:$HOME/.local/bin/scripts:$XDG_DATA_HOME/spicetify"
 
 # local variables
 HISTFILE="$XDG_CACHE_HOME/history"
@@ -40,5 +40,6 @@ export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc-2.0
 export PATH="$PATH:$CARGO_HOME/bin:$XDG_DATA_HOME/npm/bin:$GOPATH/bin"
 
-export FZF_DEFAULT_COMMAND="find -L"
+export FZF_DEFAULT_COMMAND='fd -t f -HL'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS='--color fg:8,bg:-1,fg+:bold:-1,bg+:-1,query:-1,prompt:bold:-1,pointer:bold:-1,info:italic:15,spinner:bold:4'

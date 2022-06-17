@@ -1,0 +1,40 @@
+#!/usr/bin/env -S sh
+
+tempfile="$HOME/.cache/${0##*/}"
+wallloc="$HOME/.cache/wallpaper.png"
+
+tick() {
+	convert -size 1920x1080 \
+		-background '#1d2021' \
+		-font JetBrains-Mono-Regular-Nerd-Font-Complete \
+		-pointsize 300 \
+		-fill '#ebdbb2' \
+		-gravity center \
+		caption:"$(date +%T)" \
+		"$wallloc" 
+	xwallpaper --focus "$wallloc" 
+}
+
+psr() {
+	stw -x 768 -y 143 pstree -U
+#	stringtest="$(pstree)"
+#	font="JetBrains-Mono-Regular-Nerd-Font-Complete"
+#  convert -background lightblue -size 900 -font "$font" \
+#          -annotate +20+20 "└─spotify───12*[{spotify}]" \
+#          "$wallloc" 
+#	while sleep 1; do
+#	convert -size 1920x1080 xc:'#1d2021' "$tempfile-bg.png"
+#    convert "$tempfile-bg.png" -fill '#ebdbb2' -pointsize 10 -font JetBrains-Mono-Bold -annotate +32+32 "$(pstree -U)" "$wallloc" 
+##	convert -size 1920x1080 xc:'#1d2021' "$wallloc" 
+##	convert "$wallloc" \
+##		-pointsize 14 \
+##		-fill '#ebdbb2' \
+##		-caption:'│         │         └─spotify───16*[{spotify}]' \
+##		"$wallloc" 
+#	bgs "$wallloc" 
+#done
+}
+
+[ $# = 0 ] && echo "usage: ${0##*/} [tick] [psr]" && exit 0
+$1
+#rm "$wallloc" 

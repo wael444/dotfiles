@@ -1,2 +1,7 @@
 #!/usr/bin/env sh
-[ "$(tr -cd '01' < /dev/urandom | head -c1)" = 0 ] && printf '\033[32mYes.\033[0m\n' || printf '\033[31mNo.\033[0m\n'
+case "$(tr -cd '0123' < /dev/urandom | head -c1)" in
+	0) printf '\033[32myes.\033[0m\n' ;;
+	1) printf '\033[31mno.\033[0m\n' ;;
+	2) printf '\033[34mmayb.\033[0m\n' ;;
+	3) printf '\033[35midk.\033[0m\n' ;;
+esac

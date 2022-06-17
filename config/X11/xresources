@@ -7,5 +7,3 @@ Xft.antialias:  true
 Xft.autohint:   false
 
 #include "/home/wael/.config/X11/rand"
-
-# vim: ft=xpm

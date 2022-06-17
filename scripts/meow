@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-for (( i=0; i<10; i++ )); do
-	sleep "$i"
-	echo meow "$i"
-done
+duration=1
+sleep $duration
+echo meow
+sleep $duration
+echo nya
+sleep $duration
+echo IM IN YOUR walLS

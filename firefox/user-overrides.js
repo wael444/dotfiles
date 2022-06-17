@@ -20,3 +20,5 @@ user_pref("privacy.clearOnShutdown.offlineApps", false);
 user_pref("privacy.cpd.offlineApps", false);
 user_pref("network.http.referer.XOriginPolicy", 0);
 user_pref("general.autoScroll", true);
+user_pref("reader.parse-on-load.enabled", false);
+user_pref("media.webspeech.synth.enabled ", false);

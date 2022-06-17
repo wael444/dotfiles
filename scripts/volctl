@@ -2,6 +2,8 @@
 # id="991049"
 sink="@DEFAULT_SINK@"
 
+[ $# = 0 ] && echo "usage: ${0##*/} [volume increase/decrease in percentage] [mute]" && exit 0
+
 getvol() {
   [ "$(pactl get-sink-mute $sink)" = "Mute: yes" ] && echo "mute" && exit
   vol=$(pactl get-sink-volume $sink)
@@ -13,7 +15,7 @@ getvol() {
 case $1 in
 	mute) pactl set-sink-mute $sink toggle ;;
     getvol) getvol && printf '%s' "$vol" && exit 0 ;;
-    *) pactl set-sink-volume $sink "$@" ;;
+    *) pactl set-sink-volume $sink "$1" ;;
 esac
 
 

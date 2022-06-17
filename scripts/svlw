@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-## my own shitty way of svlogtail but using bat(1) for da syntax highlighting
+# sv log wrapper (socklog), mainly for syntax highlighting
 
 page() {
 	bat -fPpl log --theme ansi "$@"

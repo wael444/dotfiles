@@ -1,13 +1,26 @@
 #!/usr/bin/env sh
 # shellcheck disable=2086
+# shellcheck disable=2059
+
+funcparse() {
+	funcs="norm fast main win"
+	for func in $funcs; do printf "$1" "$func"; done
+}
 case $1 in
+
 	norm) flameshot gui ;;
 	fast) flameshot gui -s -c ;;
+	main) flameshot screen --number 1 -c ;;
 	win)
-		win=$(xdotool getactivewindow)
+		win="$(xdotool getactivewindow)"
 		eval "$(xdotool getwindowgeometry --shell "$win")"
 		flameshot gui --region ${WIDTH}x${HEIGHT}+${X}+${Y}
 	;;
-	list) printf '%s\n%s\n%s' norm fast win ;;
-	*) echo "usage: ${0##*/} [norm] [fast] [win]" ;;
+
+	list) funcparse '%s\n' ;;
+	*) 
+		printf '%s' "usage: ${0##*/}"
+		funcparse ' [%s]' && printf '\n'
+	;;
+
 esac

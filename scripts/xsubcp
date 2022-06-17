@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-# shut the fuck up
-printf '👉 👈' | xclip -sel c
