@@ -1,3 +1,3 @@
 xrdb $XRESOURCES
 pgrep pipewire >/dev/null || pipewire &
-exec dbus-launch dwm 
+exec dbus-launch ${1:-dwm} 

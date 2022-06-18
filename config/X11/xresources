@@ -6,4 +6,4 @@ Xft.hinting:    true
 Xft.antialias:  true
 Xft.autohint:   false
 
-#include "/home/wael/.config/X11/solarized"
+#include "/home/wael/.config/X11/gruvbox"
