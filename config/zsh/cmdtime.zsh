@@ -16,7 +16,7 @@ function _cmdtime() {
 			[ ! "${h%.*}" -eq 0 ] && format="${s}s"
 			[ ! "${m%.*}" -eq 0 ] && format+=" ${m}m "
 			[ ! "${s%.*}" -eq 0 ] && format+="${s%?}s"
-			printf '%s' "${format:-${${${s#*.}#0}#0}ms}"
+			printf '%s' "${format:-${${${s#*.}#0}#0}ms} "
 		;;
 	esac
 }

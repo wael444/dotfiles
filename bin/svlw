@@ -1,0 +1,48 @@
+#!/usr/bin/env sh
+# sv log wrapper (socklog), mainly for syntax highlighting
+
+struct() {
+	# UTC: YYYY-MM-DDTHH:MM:SS.NNNNN SUB.STATE: ... && only SUB.STATE: ... is kept, UTC TIME kept for conversion
+	while read -r utc sub mesg; do 
+		case "$mesg" in
+			'['*) # [ UPTIME ] ENT: MESG && [ UPTIME ] MESG 
+				time="${mesg%%]*}]"   # [ TIME ] ENT: MESG -> [ TIME ]
+				mesg="${mesg#*] }"    # [ TIME ] ENT: MESG -> ENT: MESG
+				ent="${mesg%%: *}: "  # ENT: MESG -> ENT
+				mesg="${mesg#"$ent"}" # ENT: MESG -> MESG
+				[ "${ent%: }" = "$mesg" ] && unset ent # ENT = MESG, some cases do not have ENT.
+				time="$(date '+%b %_d %T' -d "$utc +0")" # UTC: YYYY-MM-DDTHH:MM:SS.NNNNN -> LOCALTIME ABV. M DD HH:MM:SS
+			;; 
+			*) # HH DD HH:MM:SS ENT:MESG
+				entt="${mesg%%: *}:"        # MM DD HH:MM:SS ENT: MESG -> MM DD HH:MM:SS ENT:
+				ent="${entt##*\ }"          # MM DD HH:MM:SS ENT: -> ENT:
+				time="${entt% "$ent"}"      # MM DD HH:MM:SS ENT: -> MM DD HH:MM:SS
+				ent="$ent "                 # ENT: -> ENT:<space>
+				mesg="${mesg#"$time $ent"}" # MM DD HH:MM:SS ENT: MESG -> MESG
+			;;
+		esac
+
+		print() { 
+			printf '\033[1;34m%s \033[%sm%s\033[0m%s\n' "$time" "$1" "$ent" "$mesg"
+		}
+
+		notify() {
+			[ -n "$notify" ] && {
+				notif="<b>$time</b> -- <i><b>${ent%: }</b></i>\n$mesg"
+				dunstify -a socklog -r 52165 -u "$1" "socklog" "$notif"
+			}
+		}
+
+		[ "$1" = notif ] && notify=1 
+		case "$sub" in 
+			*err*) print 31; notify critical ;; # red ENT
+			*warn*) print 33; notify critical ;; # yellow ENT
+			*notice*) print 35; notify normal ;; # purple ENT
+			*info*) print 32; notify low ;; # green ENT
+		esac
+		unset _ sub mesg time mesg ent entt # idk for safety
+	done
+}
+head -1 /var/log/socklog/kernel/current | struct notif >/dev/null
+sort -u /var/log/socklog/*/current | struct
+tail -Fq -n0 /var/log/socklog/*/current | struct notif | uniq

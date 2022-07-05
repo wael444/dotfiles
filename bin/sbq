@@ -1,0 +1,141 @@
+#!/usr/bin/env -S sh
+
+## helpers
+notify() {
+	dunstify -r 64219 "$@"
+}
+
+printnotif() {
+	width="$1"
+	shift
+	while [ $# -gt 0 ]; do
+		printf "%-${width}s - %s\n" "$1" "$2"
+		shift 2
+	done
+}
+
+## the real
+_time() {
+	echo "^C4^^d^ $(date '+%a %d') ^C4^^d^ $(date '+%H:%M:%S')"
+
+	[ -n "$BLOCK_BUTTON" ] && {
+		today=$(date '+%-d')
+		cal="$(cal | tail -n +2 | sed -z "s|$today|<b><u>$today</u></b>|1")"
+		notify -h string:x-canonical-private-synchronous:calendar \
+			"$(date '+%Y %m (%B)')" "$cal"
+	}
+}
+
+cpu() {
+	read -r temp < /sys/class/thermal/thermal_zone2/temp
+	read -r loadavg < /proc/loadavg
+	loadavg="${loadavg%%\ *}"
+	temp="${temp%000}°C"
+	echo "^C4^^d^ $loadavg ^C4^﨎^d^ $temp"
+
+	case $BLOCK_BUTTON in
+		1) notify "cpu usage" "\n$(ps -ewo %cpu,cmd --sort=-%cpu --no-headers | head -20 | cut -c-50 )" ;;
+		3)
+			read -r gov < /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+			read -r freq < /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+			read -r cstate < /sys/module/intel_idle/parameters/max_cstate
+			notify "processor information" "$(
+				printnotif 12 "Load Average" "$loadavg" \
+							  "Governor" "$gov" \
+							  "Frequency" "$((freq / 1000))MHz" \
+							  "C-State" "${cstate}C" \
+							  "Temperature" "$temp"
+			)"
+		;;
+	esac
+}
+#
+gpu() {
+	# graphics=XX memory=XX video=XX PCIe=XX
+	eval "$(nvidia-settings -q GPUUtilization -t | tr -d ,)"
+
+	# shellcheck disable=SC2154
+	echo "^C4^^d^ ${graphics}% ^C4^﨎^d^ $(nvidia-settings -q GPUCoreTemp -t)°C "
+
+	case $BLOCK_BUTTON in
+		1)
+			notify "graphics card usage" "$(
+				for usage in video PCIe memory graphics; do
+					printnotif 8 "$usage" "$(eval echo "\$$usage")"%
+				done
+			)"
+		;;
+		3)
+			notify "querying information..."
+			notify "graphics card information" "$(
+				# ok this is pretty shitty but it werks
+				for get in NvidiaDriverVersion GPUCoreTemp GPUCurrentFanSpeed GPUResizableBar RefreshRate3; do
+					query="$(nvidia-settings -q $get -t | tr '\n' ' ')"
+					printnotif 19 "$get" "$query"
+				done
+			)"
+		;;
+	esac
+}
+
+#
+mem() {
+	while IFS=':k ' read -r name value _; do 
+		case $name in 
+			MemAvailable) memavail=$value ;; 
+			MemTotal) memtotal=$value ;; 
+		esac 
+	done < /proc/meminfo
+	memusage="$(( (memtotal - memavail) * 100 / memtotal ))%"
+	echo "^C4^^d^ $memusage"
+
+	case $BLOCK_BUTTON in
+		1) notify "memory usage" "$(
+				ps -axo rss,%mem,cmd --sort -rss --no-headers | head -20 | cut -c-50 \
+				| while read -r rss rest; do 
+					echo $((rss/1024))"MB -" "$rest"
+				done
+			)" 
+		;;
+		3) 
+			memtotal="$((memtotal / 1024))MiB"
+			memavail="$((memavail / 1024))MiB"
+			notify "$(printnotif 8 "$memtotal" "total" "$memavail" "used")" 
+		;;
+	esac
+}
+#
+net() {
+	interface=/sys/class/net/eno2/
+	read -r status < $interface/operstate
+	[ "$status" = down ] && printicon 4 ""
+
+	update() {
+		cache="${XDG_CACHE_HOME:-$HOME/.cache}/${0##*/}_${1##*/}"
+		read -r old < "$cache"
+		read -r new < "$1"
+		printf '%s' "$new" > "$cache"
+		numfmt --to=iec "$(( new - old ))"
+	}
+
+	echo "^C4^^d^ $(update $interface/statistics/rx_bytes) ^C4^^d^ $(update $interface/statistics/tx_bytes)"
+}
+#
+disk() {
+	read -r temp1 < /sys/devices/pci0000:00/0000:00:1b.4/0000:03:00.0/nvme/nvme0/hwmon0/temp1_input
+	read -r temp2 < /sys/devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme1/hwmon1/temp1_input
+	echo "^C4^﫭^d^ ${temp1%850}°C^C4﫭^d^${temp2%850}°C"
+}
+
+#
+audio() {
+	echo "^C4^墳^d^ $(volctl getvol)%"
+	case $BLOCK_BUTTON in
+		1) pavucontrol ;;
+		3) volctl mute ;;
+		5) volctl -5%  ;;
+		4) volctl +5%  ;;
+	esac
+}
+
+$1 

@@ -1,0 +1,46 @@
+.main-rootlist-rootlistDividerGradient {
+    background: unset;
+}
+
+.main-home-homeHeader,
+.x-entityHeader-overlay,
+.x-actionBarBackground-background,
+.main-actionBarBackground-background,
+.main-entityHeader-overlay,
+.main-entityHeader-backgroundColor
+{
+    background-color: unset !important;
+    background-image: unset !important;
+}
+
+.main-topBar-background {
+    background-color: unset !important;
+}
+
+.Root__nav-bar {
+    width: 5px;
+    transition: width .3s, content-visibility .3s;
+    content-visibility: hidden;
+}
+
+.Root__nav-bar:hover {
+    width: 240px;
+    content-visibility: initial;
+    transition: width .3s, content-visibility .3s;
+}
+
+.main-topBar-historyButtons {
+    padding-left: 50px;
+}
+
+.main-buddyFeed-buddyFeedRoot {
+  transition: width 0.3s;
+}
+
+@media screen and (max-width: 912px) {
+  .main-buddyFeed-buddyFeedRoot {
+    width: 0;
+  }
+}
+
+ 

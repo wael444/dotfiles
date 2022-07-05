@@ -1,3 +1,4 @@
 xrdb $XRESOURCES
-pgrep pipewire >/dev/null || pipewire &
-exec dbus-launch ${1:-dwm} 
+xwallpaper --zoom /data/media/wallpapers/lightflowr.png
+xws psr &
+exec dbus-launch --exit-with-session --sh-syntax ${1:-dwm}

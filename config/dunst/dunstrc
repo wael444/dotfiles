@@ -6,13 +6,13 @@
     width = (0, 512)
     height = 256
     origin = top-right
-    offset = 16x16
+    offset = 32x32
     scale = 0
-    notification_limit = 0
+    notification_limit = 4
 
     ## progress bar
     progress_bar = true
-    progress_bar_height = 10
+    progress_bar_height = 16
     progress_bar_frame_width = 1
     progress_bar_min_width = 150
     progress_bar_max_width = 300
@@ -21,9 +21,9 @@
     indicate_hidden = yes
     transparency = 0
 
-    padding = 6
-    horizontal_padding = 6
-    text_icon_padding = 6
+    padding = 16
+    horizontal_padding = 16
+    text_icon_padding = 16
 
 	separator_height = 2
 	gap_size = 0
@@ -65,8 +65,8 @@
 
     ## icons
     icon_position = left
-    min_icon_size = 128 
-    max_icon_size = 128 
+    min_icon_size = 144 
+    max_icon_size = 144 
     icon_path = /dev/null
 
     ## history
@@ -103,18 +103,20 @@
 [urgency_low]
     background = "#1d2021"
     foreground = "#ebdbb2"
-    timeout = 10
+    frame_color = "#b16286"
+    timeout = 3
 
 [urgency_normal]
     background = "#1d2021"
     foreground = "#ebdbb2"
-    timeout = 10
+    frame_color = "#458588"
+    timeout = 6
 
 [urgency_critical]
     background  = "#1d2021"
     foreground  = "#ebdbb2"
     frame_color = "#cc241d"
-    timeout = 0
+    timeout = 16
 
 # Every section that isn't one of the above is interpreted as a rules to
 # override settings for certain messages.
@@ -233,14 +235,15 @@
 #    appname = Pidgin
 #    summary = *twitter.com*
 #    urgency = normal
-#
-#[stack-volumes]
-#    appname = "some_volume_notifiers"
-#    set_stack_tag = "volume"
-#
-#
+
+[socklog]
+	appname = socklog
+    format = "<span font="Monospace 11"><b>%s</b></span>\n%b"
+
 [Spotify]
 	appname = Spotify
+    format = "<span font="Monospace 17"><b>%s</b></span>\n<span font="Monospace 12">%b</span>"
 	frame_color = "#98971a"
+    timeout = 3
 #
 # vim: ft=cfg

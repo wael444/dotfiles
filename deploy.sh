@@ -1,52 +1,40 @@
-#!/usr/bin/env -S bash
+#!/usr/bin/env -S sh -e
+sed -n '2,5p' README.md 2>/dev/null; echo
 
-# required for files/
-shopt -s dotglob
+TO="home"
+FROM="$PWD"
 
-to="$HOME"
-from="$(pwd)"
-
-helperfiles() {
-	mkdir -pv $to/$2
-	for files in $from/$1/*; do
-		tofile=$to/$2/${files##*/}
-		[ -e $tofile ] && rm -rfv $tofile
-		ln -sfv $files $tofile
-	done
+h() {
+	file="$2"
+	target="$3"
+	case "$1" in
+		fd) # $file/* -> TO/$target/*<
+			[ ! -d "$TO/$target" ] && mkdir -pv "$TO/$target"
+			for files in "$FROM/$file"/*; do
+				tofile="$TO/$target/${files##*/}"
+				[ -e "$tofile" ] && rm -rfv "$tofile"
+				ln -sfv "$files" "$tofile"
+			done
+	    ;;
+		d) # file/ -> TO/target
+			[ ! -d "$TO/$file" ] && mkdir -pv "$TO/$target"
+			[ -e "$TO/$target/$file" ] && rm -rfv "${TO:?}/$target/$file"
+			ln -sf "$FROM/$file" "$TO/$target/$file"
+		;;
+		f) # file -> TO/target/file
+			[ -f "$TO/$target/${file##*/}" ] && rm -rfv "${TO:?}/$target/$file"
+			ln -sfv "$FROM/$file" "$TO/$target/$file" 
+		;;
+	esac
 }
 
-helperdir() {
-	mkdir -pv "$to/$2"
-	[ -e "$to/$2/$1" ] && rm -rfv "$to/$2/$1"
-	ln -sfv "$from/$1" "$to/$2/$1"
-}
+h f .zshenv 
+h fd config .config
+h fd applications .local/share/applications
+h d txt .local/share
+h d bin .local
 
-[ -e "$to"/.zshenv ] && rm -rfv "$to"/.zshenv
-ln -sfv "$from"/.zshenv "$to"/.zshenv
-helperfiles config ".config"
-helperdir txt ".local/share"
-helperfiles applications ".local/share/applications"
-helperdir scripts ".local/bin"
-
-# certain files need to be created for environment variables
-mkdir -pv "$to"/.config/gtk-{3,2}.0 "$to"/.local/share/gnupg
-
-## firefox
-#### left to be done manually
-#firefoxpath=$to/.mozilla/firefox
-#firefoxprofile=$firefoxpath/default
-#[ -d $firefoxpath ] && rm -rfv $firefoxpath
-#mkdir -pv $firefoxprofile
-#cat << EOF > $firefoxpath/profiles.ini
-#[Profile0]
-#Name=${firefoxprofile##*/}
-#IsRelative=1
-#Path=${firefoxprofile##*/}
-#EOF
-#ln -sfv $from/firefox/user-overrides.js $firefoxprofile
-#ln -sfv $from/firefox/chrome $firefoxprofile
-#for filestoget in user.js prefsCleaner.sh updater.sh; do
-#	url=https://raw.githubusercontent.com/arkenfox/user.js/master
-#	curl $url/$filestoget -o $firefoxprofile/$filestoget
-#done
-#chmod -v a+x $firefoxprofile/*.sh
+# for GnuPG and GTK, these need to exist beforehand
+mkdir -pv "$TO"/.config/gtk-3.0 "$TO"/.config/gtk-2.0 "$TO"/.local/share/gnupg
+chown -Rv "$USER" "$TO"/.local/share/gnupg
+chmod -v 700 "$TO"/.local/share/gnupg

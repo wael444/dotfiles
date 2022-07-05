@@ -6,7 +6,6 @@
 
 ```
 
-
 ## software
 + wm: [dwm](https://github.com/wael444/dwm)
 + term: [st](https://github.com/wael444/dwm)
@@ -20,4 +19,3 @@
 ```sh
 ./deploy.sh
 ```
-**NOTE:** this script automatically adds the firefox profile, which means it removes the entire firefox directory.

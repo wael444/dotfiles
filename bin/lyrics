@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+lyricsapi="https://makeitpersonal.co/lyrics/"
+
+curl --get "$lyricsapi" \
+     --data-urlencode "artist=lungskull" \
+     --data-urlencode "title=eyc"

@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+# shellcheck disable=SC2059
+# shellcheck disable=SC2086
+
+funcparse() {
+	funcs="norm fast main curr slct"
+	for func in $funcs; do printf "$1" "$func"; done
+}
+case $1 in
+
+	norm) flameshot gui ;;
+	fast) flameshot gui -s -c ;;
+	main) flameshot screen --number 1 -c ;;
+	text) 
+		text="$(flameshot gui -s -r | tesseract-ocr stdin stdout)"
+		printf '%s' "$text" | xclip -sel c
+		dunstify -a shot "copied to clipboard" "$text"
+		;; 
+	curr)
+		eval "$(xdotool getactivewindow getwindowgeometry --shell)"
+		flameshot gui --region ${WIDTH}x${HEIGHT}+${X}+${Y}
+	;;
+	slct)
+		eval "$(xdotool selectwindow getwindowgeometry --shell)"
+		flameshot gui --region ${WIDTH}x${HEIGHT}+${X}+${Y}
+	;;
+
+	list) funcparse '%s\n' ;;
+	*) 
+		printf '%s' "usage: ${0##*/}"
+		funcparse ' [%s]' && printf '\n'
+	;;
+
+esac

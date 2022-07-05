@@ -3,7 +3,7 @@
 # shellcheck disable=SC2086
 # shellcheck source=/dev/null
 
-# read -r hostname < /proc/sys/kernel/hostname
+read -r hostname < /proc/sys/kernel/hostname
 read -r type <  /proc/sys/kernel/ostype
 read -r kernel < /proc/sys/kernel/osrelease
 read -r board < /sys/class/dmi/id/board_name
@@ -55,17 +55,20 @@ wm="${wm%%\"}"
 [ "$TERM" = linux ] && term="$(tty)" || term="${TERM%%-*}" # st-256color
 
 print() {
-	printf "\033[%sm%-11s\033[0m%s\n" "$1" "$2" "$3"
+	printf "\033[%sm%-11s\033[0m%s\n" "$1" "${2}:" "$3"
 }
 
-print '1;34' distro "$PRETTY_NAME"
-print '1;34' kernel "$type $kernel"
-print '1;34' shell "${SHELL##*/}"
-print '1;34' packages "$pkgs"
-print '1;34' habitat "$wm"
-print '1;34' terminal "$term"
-print '1;34' board "$sys ${board% GAMING}" # self-explanitory
-print '1;34' processor "$cpu"
-print '1;34' graphics "$gpu"
-print '1;34' memory "${mem}MB"
-print '1;34' uptime "$up"
+col='1;37'
+print $col user "$USER"
+print $col hostname "$hostname"
+print $col distro "$PRETTY_NAME"
+print $col kernel "$type $kernel"
+print $col shell "${SHELL##*/}"
+print $col packages "$pkgs"
+print $col habitat "$wm"
+print $col terminal "$term"
+print $col board "$sys ${board% GAMING}" # self-explanitory
+print $col processor "$cpu"
+print $col graphics "$gpu"
+print $col memory "${mem}MB"
+print $col uptime "$up"

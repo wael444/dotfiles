@@ -1,5 +1,4 @@
 [Desktop Entry]
 Type=Application
 Name=File Manager
-Terminal=true
-Exec=st -e nvim %u
+Exec=/usr/local/bin/st -e nvim %u

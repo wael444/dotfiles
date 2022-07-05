@@ -1,7 +1,8 @@
 config/ncspot/userstate.cbor
 config/spotifyd/password
-config/spicetify/Themes
 config/spicetify/Backup
 config/spicetify/Extracted
-config/spicetify/config-xpui.ini
+config/spicetify/Extensions
+config/spicetify/CustomApps
+config/btop/btop.log
 config/zsh/.zcompdump

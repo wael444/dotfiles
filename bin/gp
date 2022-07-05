@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+tr -dc "A-Za-z0-9!\"#$%&'()*+,-./:;<=>?@[\]^_\`{\|}~" </dev/urandom | head -c "${1:-64}" | tee >(xclip -sel c)

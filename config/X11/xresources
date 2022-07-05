@@ -6,4 +6,10 @@ Xft.hinting:    true
 Xft.antialias:  true
 Xft.autohint:   false
 
+Nsxiv.window.background:
+Nsxiv.window.foreground:
+Nsxiv.mark.foreground:
+Nsxiv.bar.background:
+Nsxiv.bar.foreground:
+
 #include "/home/wael/.config/X11/gruvbox"

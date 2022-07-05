@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-duration=1
-sleep $duration
-echo meow
-sleep $duration
-echo nya
-sleep $duration
-echo IM IN YOUR walLS

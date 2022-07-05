@@ -1,0 +1,9 @@
+#!/usr/bin/env -S sh
+sum=0
+for c in 4 10; do
+	for ci in $(seq 0 7); do 
+		printf '\033[%dm%4s\033[0m' "${c}${ci}" "$sum"
+		sum=$((sum + 1))
+	done
+	printf '\n'
+done

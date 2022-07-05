@@ -3,12 +3,13 @@
 cleanup() {
     exec 3>&-
     rm "$UEBERZUG_FIFO" >/dev/null 2>&1
+	rm -rf "$LFTMPDIR"
 }
 
 [ -n "$DISPLAY" ] || { echo "\$DISPLAY missing";exit 1;}
 command -v ueberzug >/dev/null || { echo 'ueberzug missing';exit 1;}
 
-export LFTMPDIR="$(mktemp -d --suffix="${0##*/}")"
+LFTMPDIR="$(mktemp -d --suffix="${0##*/}")"
 export UEBERZUG_FIFO="$LFTMPDIR/${0##*/}-ueberzug-$$"
 export TMPTHUMBNAIL="$LFTMPDIR/${0##*/}-thumbnail"
 export UEBERZUG_ID="lf-ueberzug"
@@ -17,5 +18,4 @@ mkfifo "$UEBERZUG_FIFO"
 ueberzug layer -p json -s < "$UEBERZUG_FIFO" &
 exec 3>"$UEBERZUG_FIFO"
 trap cleanup EXIT QUIT INT TERM
-/usr/bin/lf "$@"
-rm -rf "$LFTMPDIR"
+/usr/bin/lf "$@" 3>&-

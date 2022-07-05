@@ -1,5 +1,5 @@
 set ratios 1:2:3
-set cleaner     ~/.config/lf/hl
+set cleaner     ~/.config/lf/cl
 set previewer   ~/.config/lf/pv
 set preview    true
 set hidden     true

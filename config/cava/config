@@ -1,7 +1,13 @@
 [general]
 framerate = 144
-sensitivity = 30
+overshoot = 5
+sensitivity = 10
 autosens = 0
+bars = 0
+bar_width = 1
 
 [output]
 method = ncurses
+
+[smoothing]
+gravity = 20

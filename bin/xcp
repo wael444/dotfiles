@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S bash -ex
 color="$(sxcs -o --hex | cut -f 2)"
 convert -size 256x256 xc:"$color" /tmp/color.png
 xclip -sel c <<< "$color"

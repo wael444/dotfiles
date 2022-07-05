@@ -16,7 +16,7 @@ tick() {
 }
 
 psr() {
-	stw -x 768 -y 143 pstree -U
+	stw -A 0 -f '#ebdbb2' -x 784 -y 180 sh -c "while sleep 0.5; do pstree -U; printf '\004\n'; done"
 #	stringtest="$(pstree)"
 #	font="JetBrains-Mono-Regular-Nerd-Font-Complete"
 #  convert -background lightblue -size 900 -font "$font" \

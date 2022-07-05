@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+printf '{"action": "remove", "identifier": "%s"}\n' "$UEBERZUG_ID" > "$UEBERZUG_FIFO"
