@@ -36,7 +36,7 @@ alias \
 	udevrel='udevadm control --reload-rules && udevadm trigger' \
 	ytdla='yt-dlp -f bestaudio --restrict-filenames' \
 	ytdln='yt-dlp -f bestvideo+bestaudio --restrict-filenames' \
-	csmp='doas make {uninstall,clean,install} && doas make clean' 
+	makec='doas grc make {uninstall,install,clean}' 
 
 # exa
 alias \

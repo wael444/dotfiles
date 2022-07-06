@@ -1,4 +1,4 @@
 xrdb $XRESOURCES
 xwallpaper --zoom /data/media/wallpapers/lightflowr.png
-xws psr &
+#xws psr &
 exec dbus-launch --exit-with-session --sh-syntax ${1:-dwm}

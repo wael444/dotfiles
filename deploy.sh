@@ -1,7 +1,7 @@
 #!/usr/bin/env -S sh -e
 sed -n '2,5p' README.md 2>/dev/null; echo
 
-TO="home"
+TO="$HOME"
 FROM="$PWD"
 
 h() {
