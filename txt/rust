@@ -1,5 +1,29 @@
 It is year 2028 and Linux has been completely rewritten in Rust.
 
-After adding Rust support to Linux kernel in 2021 Linux repo has been flooded with patches and pull requests from brave Rustaceans rewriting critical components in Rust to ensure their stability and memory safety that C could never guarantee. After a few painful years of code reviews and salt coming from C programmers losing their jobs left and right we have finally achieved a 100% Rust Linux kernel. Not a single kernel panic or crash has been reported ever since. In fact, the kernel was so stable that Microsoft gave up all their efforts in Windows as we know it, rewrote it in Rust, and Windows became just another distro in the Linux ecosystem. Other projects and companies soon followed the trend - if you install any Linux distro nowadays it won't come with grep, du or cat - there is only ripgrep, dust and bat. Do you use a graphical interface? Good luck using deprecated projects such as Wayland, Gnome or KDE - wayland-rs , Rsome and RDE is where it's all at. The only serious browser available is Servo and it holds 98% of the market share. Every new game released to the market, including those made by AAA developers, is using the most stable, fast and user-friendly game engine - Bevy v4.20. People love their system and how stable, safe and incredibly fast it is. Proprietary software is basically non-existent at this point. By the year 2035 every single printer, laptop, industrial robot, rocket, autonomous car, submarine, sex toy is powered by software written in Rust. And they never crash or fail. The world is so prosperous and stable that we have finally achieved world peace.
+After adding Rust support to Linux kernel in 2021 Linux repo has been
+flooded with patches and pull requests from brave Rustaceans rewriting
+critical components in Rust to ensure their stability and memory safety
+that C could never guarantee. After a few painful years of code reviews
+and salt coming from C programmers losing their jobs left and right
+we have finally achieved a 100% Rust Linux kernel. Not a single kernel
+panic or crash has been reported ever since. In fact, the kernel was so
+stable that Microsoft gave up all their efforts in Windows as we know
+it, rewrote it in Rust, and Windows became just another distro in the
+Linux ecosystem. Other projects and companies soon followed the trend
+- if you install any Linux distro nowadays it won't come with grep,
+du or cat - there is only ripgrep, dust and bat. Do you use a graphical
+interface? Good luck using deprecated projects such as Wayland, Gnome or
+KDE - wayland-rs , Rsome and RDE is where it's all at. The only serious
+browser available is Servo and it holds 98% of the market share. Every
+new game released to the market, including those made by AAA developers,
+is using the most stable, fast and user-friendly game engine - Bevy
+v4.20. People love their system and how stable, safe and incredibly fast
+it is. Proprietary software is basically non-existent at this point. By
+the year 2035 every single printer, laptop, industrial robot, rocket,
+autonomous car, submarine, sex toy is powered by software written in
+Rust. And they never crash or fail. The world is so prosperous and stable
+that we have finally achieved world peace.
 
-Ferris looks down at what he has created once more and smiles, as he always did. He says nothing as he is just a crab and a mascot, but you can tell from his eyes... That he is truly proud of his community.
+Ferris looks down at what he has created once more and smiles, as he
+always did. He says nothing as he is just a crab and a mascot, but you
+can tell from his eyes... That he is truly proud of his community.

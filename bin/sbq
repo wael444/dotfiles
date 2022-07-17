@@ -1,4 +1,8 @@
-#!/usr/bin/env -S sh
+#!/usr/bin/env -S yash
+
+newline="
+"
+esc=""
 
 ## helpers
 notify() {
@@ -14,27 +18,33 @@ printnotif() {
 	done
 }
 
-## the real
-_time() {
-	echo "^C4^^d^ $(date '+%a %d') ^C4^^d^ $(date '+%H:%M:%S')"
 
+# shellcheck disable=SC2299
+# shellcheck disable=SC3060
+query_time() {
+	echo " $(date '+%a %d')  $(date '+%H:%M:%S')"
 	[ -n "$BLOCK_BUTTON" ] && {
-		today=$(date '+%-d')
-		cal="$(cal | tail -n +2 | sed -z "s|$today|<b><u>$today</u></b>|1")"
-		notify -h string:x-canonical-private-synchronous:calendar \
-			"$(date '+%Y %m (%B)')" "$cal"
+		cal="$(cal --color=always)" # force colorization
+		# remove all after the header, it will be replaced anyway
+		cal="${cal##*"${cal%%"$newline"*}""$newline"}"
+		# since --color=always is called, current day is highlighted with reversed colors
+		# remove all after ESC[7m and then all before ESC[27M
+		curday="${${cal##*"$esc"[7m}%%"$esc"[27m*}"
+		cal="${cal//$curday/<b><u>$curday</u></b>}" # highlight current day with pango markup
+		cal="${${cal/"$esc"[7m/}/"$esc"[27m/}" # strip ansi escape codes
+		notify "    $(date '+%Y %m %B')" "$cal"
 	}
 }
 
-cpu() {
+query_cpu() {
 	read -r temp < /sys/class/thermal/thermal_zone2/temp
 	read -r loadavg < /proc/loadavg
 	loadavg="${loadavg%%\ *}"
 	temp="${temp%000}°C"
-	echo "^C4^^d^ $loadavg ^C4^﨎^d^ $temp"
+	echo " $loadavg 﨎 $temp"
 
 	case $BLOCK_BUTTON in
-		1) notify "cpu usage" "\n$(ps -ewo %cpu,cmd --sort=-%cpu --no-headers | head -20 | cut -c-50 )" ;;
+		1) notify "cpu usage" "$(ps -ewo %cpu,cmd --sort=-%cpu --no-headers | head -20 | cut -c-50 )" ;;
 		3)
 			read -r gov < /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 			read -r freq < /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
@@ -49,13 +59,13 @@ cpu() {
 		;;
 	esac
 }
-#
-gpu() {
+
+query_gpu() {
 	# graphics=XX memory=XX video=XX PCIe=XX
 	eval "$(nvidia-settings -q GPUUtilization -t | tr -d ,)"
 
 	# shellcheck disable=SC2154
-	echo "^C4^^d^ ${graphics}% ^C4^﨎^d^ $(nvidia-settings -q GPUCoreTemp -t)°C "
+	echo " ${graphics}% 﨎 $(nvidia-settings -q GPUCoreTemp -t)°C "
 
 	case $BLOCK_BUTTON in
 		1)
@@ -66,10 +76,11 @@ gpu() {
 			)"
 		;;
 		3)
+			set -o brace-expand
 			notify "querying information..."
 			notify "graphics card information" "$(
-				# ok this is pretty shitty but it werks
-				for get in NvidiaDriverVersion GPUCoreTemp GPUCurrentFanSpeed GPUResizableBar RefreshRate3; do
+				# ok this is pretty shitty but it works i guess
+				for get in NvidiaDriverVersion GPU{CoreTemp,CurrentFanSpeed,ResizableBar} RefreshRate3; do
 					query="$(nvidia-settings -q $get -t | tr '\n' ' ')"
 					printnotif 19 "$get" "$query"
 				done
@@ -79,15 +90,14 @@ gpu() {
 }
 
 #
-mem() {
+query_mem() {
 	while IFS=':k ' read -r name value _; do 
 		case $name in 
 			MemAvailable) memavail=$value ;; 
 			MemTotal) memtotal=$value ;; 
 		esac 
 	done < /proc/meminfo
-	memusage="$(( (memtotal - memavail) * 100 / memtotal ))%"
-	echo "^C4^^d^ $memusage"
+	echo " $(( (memtotal - memavail) * 100 / memtotal ))%"
 
 	case $BLOCK_BUTTON in
 		1) notify "memory usage" "$(
@@ -104,8 +114,8 @@ mem() {
 		;;
 	esac
 }
-#
-net() {
+
+query_net() {
 	interface=/sys/class/net/eno2/
 	read -r status < $interface/operstate
 	[ "$status" = down ] && printicon 4 ""
@@ -118,18 +128,20 @@ net() {
 		numfmt --to=iec "$(( new - old ))"
 	}
 
-	echo "^C4^^d^ $(update $interface/statistics/rx_bytes) ^C4^^d^ $(update $interface/statistics/tx_bytes)"
+	echo " $(update $interface/statistics/rx_bytes)  $(update $interface/statistics/tx_bytes)"
 }
-#
-disk() {
-	read -r temp1 < /sys/devices/pci0000:00/0000:00:1b.4/0000:03:00.0/nvme/nvme0/hwmon0/temp1_input
-	read -r temp2 < /sys/devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme1/hwmon1/temp1_input
-	echo "^C4^﫭^d^ ${temp1%850}°C^C4﫭^d^${temp2%850}°C"
+
+query_disk() {
+	read -r ssd1_temp < /sys/devices/pci0000:00/0000:00:1b.4/0000:03:00.0/nvme/nvme0/hwmon0/temp1_input
+	read -r ssd1_modl < /sys/devices/pci0000:00/0000:00:1b.4/0000:03:00.0/nvme/nvme0/model
+	read -r ssd2_temp < /sys/devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme1/hwmon1/temp1_input
+	read -r ssd2_modl < /sys/devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme1/model
+	echo "${ssd1_modl%%\ *} ${ssd1_temp%850}°C ${ssd2_modl%%\ *} ${ssd2_temp%850}°C"
 }
 
 #
 audio() {
-	echo "^C4^墳^d^ $(volctl getvol)%"
+	echo "墳$(volctl getvol)%"
 	case $BLOCK_BUTTON in
 		1) pavucontrol ;;
 		3) volctl mute ;;
@@ -138,4 +150,4 @@ audio() {
 	esac
 }
 
-$1 
+query_"$1" 

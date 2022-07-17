@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-for ((i=1; i<2; i++)); do
-	notify-send $i
-	sleep 1
-	printf '%s\n' "meow $i"
-	printf '\4'
-done

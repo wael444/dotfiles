@@ -5,7 +5,7 @@
     ## geometry
     width = (0, 512)
     height = 256
-    origin = top-right
+    origin = top-center
     offset = 32x32
     scale = 0
     notification_limit = 4
@@ -21,9 +21,9 @@
     indicate_hidden = yes
     transparency = 0
 
-    padding = 16
-    horizontal_padding = 16
-    text_icon_padding = 16
+    padding = 8
+    horizontal_padding = 8
+    text_icon_padding = 8
 
 	separator_height = 2
 	gap_size = 0
@@ -238,11 +238,11 @@
 
 [socklog]
 	appname = socklog
-    format = "<span font="Monospace 11"><b>%s</b></span>\n%b"
+    format = "<span font="Monospace 18"><b>%s</b></span>\n%b"
 
 [Spotify]
 	appname = Spotify
-    format = "<span font="Monospace 17"><b>%s</b></span>\n<span font="Monospace 12">%b</span>"
+    format = "<span font="Monospace 18"><b>%s</b></span>\n<span font="Monospace 14">%b</span>"
 	frame_color = "#98971a"
     timeout = 3
 #

@@ -1,9 +1,5 @@
 #!/usr/bin/env sh 
 
-prompt() {
-	[ "$(printf "nope\nsure!!" | fzf --height=1 --no-info)" = "sure!!" ] && return 0;
-}
-
 kill() {
 	choose="$(ps -au "$USER" -o pid,cmd --no-header | fzf)"
 	[ -z "$choose" ] && exit 127

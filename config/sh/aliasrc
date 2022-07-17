@@ -1,0 +1,69 @@
+# colourizer
+_grc='grc -es'
+
+alias cp='cp -v'
+alias mv='mv -v'
+alias grep='grep --color=always'
+alias md='mkdir -vp'
+alias rm='rm -vfI'
+alias bat='bat --theme ansi -p'
+alias du='$_grc du -h'
+alias free='$_grc free -m'
+alias df='$_grc df -Th'
+
+alias ls='$_grc ls -hFo --color --group-directories-first' 
+alias la='ls -A' 
+alias ll='ls -l' 
+
+alias b='bat'
+alias ex='chmod -v +x'
+alias xe='doas xbps-install'
+alias xr='doas xbps-remove'
+alias mine='doas chown -Rv $USER:$USER'
+alias makec='doas $_grc make {uninstall,install,clean}'
+alias iwanip='curl ipinfo.io/ip'
+
+alias edit='$EDITOR'
+alias rl='exec $0'
+alias doas='doas ' # for aliases to be used under superuser 
+
+alias \
+w='$_grc w' \
+id='$_grc id' \
+ip='$_grc ip' \
+ps='$_grc ps' \
+ss='$_grc ss' \
+who='$_grc who' \
+dig='$_grc dig' \
+env='$_grc env' \
+g++='$_grc g++' \
+gcc='$_grc gcc' \
+diff='$_grc diff' \
+last='$_grc last' \
+lsof='$_grc lsof' \
+make='$_grc make' \
+nmap='$_grc nmap' \
+ping='$_grc ping' \
+stat='$_grc stat' \
+tail='$_grc tail' \
+blkid='$_grc blkid' \
+fdisk='$_grc fdisk' \
+lsblk='$_grc lsblk' \
+lsmod='$_grc lsmod' \
+lspci='$_grc lspci' \
+mount='$_grc mount' \
+docker='$_grc docker' \
+iostat='$_grc iostat' \
+lsattr='$_grc lsattr' \
+sysctl='$_grc sysctl' \
+uptime='$_grc uptime' \
+vmstat='$_grc vmstat' \
+findmnt='$_grc findmnt' \
+getfacl='$_grc getfacl' \
+netstat='$_grc netstat' \
+tune2fs='$_grc tune2fs' \
+ifconfig='$_grc ifconfig' \
+docker-compose='$_grc docker-compose' \
+docker-machine='$_grc docker-machine'
+
+# vim: ft=bash

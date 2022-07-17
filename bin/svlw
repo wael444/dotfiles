@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# sv log wrapper (socklog), mainly for syntax highlighting
+# socklog log wrapper/tailer(?), mainly for colors
 
 struct() {
 	# UTC: YYYY-MM-DDTHH:MM:SS.NNNNN SUB.STATE: ... && only SUB.STATE: ... is kept, UTC TIME kept for conversion
@@ -27,22 +27,22 @@ struct() {
 		}
 
 		notify() {
-			[ -n "$notify" ] && {
-				notif="<b>$time</b> -- <i><b>${ent%: }</b></i>\n$mesg"
+			[ "$2" = notif ] && {
+				notif="<b>$time</b> -- <i><b>${ent%: }</b></i>\n$(printf '%s' "$mesg" | tr -d \<\>)"
 				dunstify -a socklog -r 52165 -u "$1" "socklog" "$notif"
 			}
 		}
 
-		[ "$1" = notif ] && notify=1 
 		case "$sub" in 
-			*err*) print 31; notify critical ;; # red ENT
-			*warn*) print 33; notify critical ;; # yellow ENT
-			*notice*) print 35; notify normal ;; # purple ENT
-			*info*) print 32; notify low ;; # green ENT
+			*err*) print 31; notify critical "$1" ;; # red ENT
+			*warn*) print 33; notify critical "$1" ;; # yellow ENT
+			*notice*) print 35; notify normal "$1" ;; # purple ENT
+			*info*) print 32; notify low "$1" ;; # green ENT
 		esac
 		unset _ sub mesg time mesg ent entt # idk for safety
 	done
 }
-head -1 /var/log/socklog/kernel/current | struct notif >/dev/null
+
+grep -m 1 'Linux version' /var/log/socklog/kernel/current | struct notif >/dev/null
 sort -u /var/log/socklog/*/current | struct
 tail -Fq -n0 /var/log/socklog/*/current | struct notif | uniq

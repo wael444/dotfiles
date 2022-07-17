@@ -1,4 +1,5 @@
-xrdb $XRESOURCES
+xrdb "$HOME"/.config/X11/xresources 
 xwallpaper --zoom /data/media/wallpapers/lightflowr.png
-#xws psr &
-exec dbus-launch --exit-with-session --sh-syntax ${1:-dwm}
+exec dbus-launch --exit-with-session --sh-syntax "${@:-dwm}"
+
+# vim: ft=sh

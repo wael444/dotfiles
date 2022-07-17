@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+fc-match -v mono:style=Bold | awk -F \" '/file/ {print $2}'

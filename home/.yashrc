@@ -1,0 +1,14 @@
+. /etc/profile
+. $HOME/.profile 
+
+PS1='${PWD//$HOME/\~} $ '
+HISTFILE=${XDG_CACHE_HOME:=$HOME/.cache}/yash_history
+HISTSIZE=8192
+
+. $HOME/.config/sh/aliasrc
+. $HOME/.config/sh/funcrc
+
+set -o emacs
+set -o brace-expand
+
+# vim: ft=bash
